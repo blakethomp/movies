@@ -14,12 +14,24 @@
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
   "dependencies": {
+    "@contentful/forma-36-react-components": "^3.37.1",
+    "dotenv": "^8.2.0",
     "gatsby": "^2.21.0",
+    "gatsby-image": "^2.4.0",
+    "gatsby-plugin-google-fonts": "^1.0.1",
+    "gatsby-plugin-postcss": "^2.3.0",
+    "gatsby-plugin-sharp": "^2.6.0",
+    "gatsby-source-contentful": "^2.3.0",
+    "gatsby-transformer-sharp": "^2.5.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
   },
   "devDependencies": {
-    "prettier": "2.0.5"
+    "node-fetch": "^2.6.0",
+    "postcss-responsive-type": "^1.0.0",
+    "prettier": "2.0.5",
+    "tailwindcss": "^1.4.0",
+    "tailwindcss-modularscale": "^1.1.0"
   },
   "repository": {
     "type": "git",

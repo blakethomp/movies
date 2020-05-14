@@ -1,0 +1,29 @@
+@tailwind base;
+
+body {
+    @apply font-body;
+}
+
+h1 {
+    @apply ms-3xl;
+}
+
+h2 {
+    @apply ms-2xl;
+}
+
+h3 {
+    @apply ms-xl;
+}
+
+h4 {
+    @apply ms-lg;
+}
+
+a {
+    @apply text-blue-600 underline;
+}
+
+@tailwind components;
+
+@tailwind utilities;
