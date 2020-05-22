@@ -45,5 +45,5 @@ function averageDays(movies) {
         return total + daysWatched(next.node.dateStarted, next.node.dateCompleted);
     }, 0);
     const average = total / movies.length;
-    return average.toFixed(0);
+    return average.toFixed(1);
 }

@@ -1,6 +1,6 @@
 export function displayDate(dateString) {
     const date = new Date(dateString);
-    return `${date.getUTCMonth()}/${date.getUTCDate()}/${date.getUTCFullYear()}`;
+    return `${date.getUTCMonth() + 1}/${date.getUTCDate()}/${date.getUTCFullYear()}`;
 }
 
 export function daysWatched(startDateStr, endDateStr) {
