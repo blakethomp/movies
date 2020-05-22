@@ -6,7 +6,7 @@ export default () => (
     <StaticQuery
         query={graphql`
             query inProgress {
-                allContentfulMovie(sort: {fields: dateStarted, order: ASC}, filter: {dateCompleted: {eq: null}}) {
+                allContentfulMovie(sort: {fields: dateStarted, order: ASC}, filter: {dateCompleted: {eq: null}, didNotFinish: {ne: true}}) {
                     edges {
                         node {
                             title

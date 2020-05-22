@@ -5,30 +5,32 @@ import MoviesRecent from '../components/movies-recent';
 import MoviesUnfinished from '../components/movies-unfinished';
 import MoviesOverview from '../components/movies-overview';
 
-const HomePage = ({data: { site, allMovies: { edges: allMovies }, currentYear: { edges: currentYear } }}) => (
-    <Layout title={site.siteMetadata.title}>
-        <div className="flex flex-wrap md:flex-no-wrap">
-            <div className="w-full max-w-screen-md md:pr-8">
-                <MoviesOverview current={currentYear} all={allMovies} />
-                <MoviesRecent />
+const HomePage = ({data: { site, allMovies: { edges: allMovies }, pageContext}}) => {
+    return (
+        <Layout title={site.siteMetadata.title}>
+            <div className="flex flex-wrap md:flex-no-wrap">
+                <div className="w-full max-w-screen-md md:pr-8">
+                    <MoviesOverview movies={allMovies} />
+                    <MoviesRecent />
+                </div>
+                <div className="w-full md:w-40 mt-4 md:mt-0 ml-auto md:flex-none">
+                    <MoviesUnfinished/>
+                </div>
             </div>
-            <div className="w-full md:w-40 mt-4 md:mt-0 ml-auto md:flex-none">
-                <MoviesUnfinished/>
-            </div>
-        </div>
-    </Layout>
-)
+        </Layout>
+    )
+}
 
 export default HomePage;
 
 export const pageQuery = graphql`
-    query HomeQuery($year: Date) {
+    query HomeQuery {
         site {
             siteMetadata {
                 title
             }
         }
-        allMovies: allContentfulMovie(filter: { dateCompleted: { ne: null } }) {
+        allMovies: allContentfulMovie(sort: { fields: dateCompleted, order: DESC }) {
             edges {
                 node {
                     title
@@ -39,20 +41,7 @@ export const pageQuery = graphql`
                     genre {
                         name
                     }
-                }
-            }
-        }
-        currentYear: allContentfulMovie(filter: { dateCompleted: { ne: null, gt: $year } }) {
-            edges {
-                node {
-                    title
-                    dateStarted
-                    dateCompleted
-                    rating
-                    expectedRating
-                    genre {
-                        name
-                    }
+                    didNotFinish
                 }
             }
         }

@@ -1,15 +1,17 @@
 const path = require(`path`)
 
-exports.createPages = function({ graphql, actions }) {
-  const { createPage } = actions
-
-  createPage({
-    path: `/`,
-    component: path.resolve(`./src/pages/index.js`),
-    context: {
-      // Data passed to context is available
-      // in page queries as GraphQL variables.
-      year: new Date().getUTCFullYear(),
-    },
-  })
+exports.onCreatePage = ({ page, actions }) => {
+  // Example for setting index context.
+  const { createPage, deletePage } = actions;
+  if (page.path === '/') {
+    deletePage(page);
+    // You can access the variable "house" in your page queries now
+    createPage({
+      ...page,
+      context: {
+        ...page.context,
+        date: `${new Date().getUTCFullYear()}-01-01`
+      },
+    });
+  }
 }
