@@ -1,11 +1,21 @@
 import React from "react"
 import { graphql } from "gatsby";
 import Layout from '../components/layout';
-import MovieList from '../components/movie-list';
+import MoviesRecent from '../components/movies-recent';
+import MoviesUnfinished from '../components/movies-unfinished';
+import MoviesOverview from '../components/movies-overview';
 
 const HomePage = ({data}) => (
     <Layout title={data.site.siteMetadata.title}>
-        <MovieList />
+        <div className="flex flex-wrap md:flex-no-wrap">
+            <div className="w-full max-w-screen-md md:pr-8">
+                <MoviesOverview />
+                <MoviesRecent />
+            </div>
+            <div className="w-full md:w-40 mt-4 md:mt-0 ml-auto md:flex-none">
+                <MoviesUnfinished/>
+            </div>
+        </div>
     </Layout>
 )
 
