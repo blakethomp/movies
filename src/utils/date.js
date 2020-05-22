@@ -17,5 +17,5 @@ export function displayDaysWatched(startDateStr, endDateStr) {
         return 'same day finish';
     }
 
-    return `${days} to finish`;
+    return `${days} days to finish`;
 }
