@@ -29,11 +29,11 @@ export default () => (
                     <ul className="mt-4">
                         {movies.map(({ node: movie }, i) => {
                             return (
-                                <li key={ i } className={ `${i > 0 ? 'mt-6' : ''}`}>
+                                <li key={i} className={ `${i > 0 ? 'mt-6' : ''}`}>
                                     <h3 className="leading-none text-xl">
                                         <a href={movie.imdb} className="no-underline hover:underline">{movie.omdb.Title}</a>
                                     </h3>
-                                    { movie.omdb.Poster && <img className="w-full my-3" src={ movie.omdb.Poster } alt={ `${ movie.omdb.Title } poster` } />}
+                                    {movie.omdb.Poster && <img className="w-full my-3" src={movie.omdb.Poster} alt={`${movie.omdb.Title} poster`} />}
                                     <div className="flex-grow-0">
                                         <p>Started: {displayDate(movie.dateStarted)}</p>
                                     </div>

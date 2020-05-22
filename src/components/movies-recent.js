@@ -45,14 +45,14 @@ export default () => (
                         {movies.map(({ node: movie }, i) => {
 
                             return (
-                                <li key={ i } className={ `clearfix md:flex  ${i > 0 ? 'my-8' : ''}`}>
-                                    { movie.omdb.Poster &&
+                                <li key={i} className={ `clearfix md:flex  ${i > 0 ? 'my-8' : ''}`}>
+                                    {movie.omdb.Poster &&
                                         <div className="flex-none mr-4 float-left md:float-none">
-                                            <img className="w-32" src={ movie.omdb.Poster } alt={ `${ movie.title } poster` } />
+                                            <img className="w-32" src={movie.omdb.Poster} alt={`${movie.title} poster`} />
                                         </div>
                                     }
                                     <div className="md:flex flex-col flex-grow-0">
-                                        <h3 className="leading-none mb-2">
+                                        <h3 className="leading-none mb-2 font-normal">
                                             <a href={movie.imdb} className="no-underline hover:underline">{movie.omdb.Title}</a>
                                         </h3>
                                         <p>{movie.omdb.Plot}</p>

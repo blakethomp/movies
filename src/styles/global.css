@@ -5,19 +5,19 @@ body {
 }
 
 h1 {
-    @apply ms-3xl;
+    @apply ms-3xl font-bold;
 }
 
 h2 {
-    @apply ms-2xl;
+    @apply ms-2xl font-bold;
 }
 
 h3 {
-    @apply ms-xl;
+    @apply ms-xl font-bold;
 }
 
 h4 {
-    @apply ms-lg;
+    @apply ms-lg font-bold;
 }
 
 a {
