@@ -37,7 +37,7 @@ export default ({ movies }) => {
             <Stat label="Did Not Finish" value={didNotFinish.length} />
 
             <div className="w-full mt-8 flex flex-row flex-wrap justify-around p-6 bg-blue-800 text-white rounded-lg">
-                <h2 className="w-full text-2xl mb-4 text-center">Top Genres</h2>
+                <h3 className="w-full text-2xl mb-4 text-center">Top Genres</h3>
                 <div className="flex flex-col">
                     <span className="text-lg self-center">Last 90 Days</span>
                     <ol className="list-decimal pl-6 mt-2">

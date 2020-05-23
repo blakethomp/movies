@@ -8,7 +8,7 @@ export function daysWatched(startDateStr, endDateStr) {
     const endDate = new Date(endDateStr);
     const difference = (endDate - startDate) / 1000 / 60 / 60 / 24;
 
-    return difference + 1;
+    return Math.floor(difference + 1);
 }
 
 export function displayDaysWatched(startDateStr, endDateStr) {
