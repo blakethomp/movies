@@ -23,7 +23,7 @@ export default ({ movies, className }) => (
                         </h3>
                         <p>{movie.omdb.Plot}</p>
                         {movie.notes &&
-                            <div className="text-sm my-4"><strong>Thoughts:</strong> {documentToPlainTextString(movie.notes.json)}</div>
+                            <div className="my-4"><strong>Thoughts:</strong> {documentToPlainTextString(movie.notes.json)}</div>
                         }
                         <div className="mt-auto flex flex-row flex-wrap justify-between">
                             <div>
