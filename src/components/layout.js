@@ -1,8 +1,16 @@
-import React from "react"
+import React from 'react';
+import PropTypes from 'prop-types';
 
-export default ({ title, children }) => (
+const Layout = ({ title, children }) => (
   <div className="mx-auto px-6 max-w-screen-lg">
     <h1 className="mb-8 font-display uppercase">{ title }</h1>
     {children}
   </div>
 )
+
+Layout.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.element
+}
+
+export default Layout;

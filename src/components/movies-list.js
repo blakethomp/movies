@@ -1,12 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { displayDate, displayDaysWatched } from '../utils/date';
 import { documentToPlainTextString  } from '@contentful/rich-text-plain-text-renderer';
 import Rate from 'rc-rate'
 
 import 'rc-rate/assets/index.css';
 
-export default ({ movies, className }) => (
-    <ul className={`movies mt-4 ${className ? className : ''}`}>
+const MoviesList = ({ movies, className }) => (
+    <ul className={`movies mt-4 ${className}`}>
         {movies.map(({ node: movie }, i) => {
             const imdbRating = movie.omdb.Ratings.find((element) => element.Source === 'Internet Movie Database');
 
@@ -47,6 +48,17 @@ export default ({ movies, className }) => (
         })}
     </ul>
 )
+
+MoviesList.propTypes = {
+    movies: PropTypes.array.isRequired,
+    className: PropTypes.string
+}
+
+MoviesList.defaultProps = {
+    className: ''
+}
+
+export default MoviesList;
 
 function ratingColor(rating, expectedRating) {
     if (rating > expectedRating) {

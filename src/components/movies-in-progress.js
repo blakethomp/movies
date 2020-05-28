@@ -2,7 +2,7 @@ import React from 'react';
 import { StaticQuery, graphql } from "gatsby";
 import { displayDate } from '../utils/date';
 
-export default () => (
+const MoviesUnfinished = () => (
     <StaticQuery
         query={graphql`
             query inProgress {
@@ -46,3 +46,5 @@ export default () => (
         }}
     />
 )
+
+export default MoviesUnfinished;

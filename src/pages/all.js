@@ -3,7 +3,7 @@ import { graphql } from "gatsby";
 import Layout from '../components/layout';
 import MoviesList from "../components/movies-list";
 
-const HomePage = ({data: { site, allMovies: { edges: allMovies }, pageContext}}) => {
+const HomePage = ({data: { allMovies: { edges: allMovies }, pageContext}}) => {
     return (
         <Layout title="All Movies">
             <MoviesList movies={allMovies} />
@@ -15,12 +15,7 @@ export default HomePage;
 
 export const pageQuery = graphql`
     query allMoviesQuery {
-        site {
-            siteMetadata {
-                title
-            }
-        }
-       allMovies: allContentfulMovie(sort: {fields: dateCompleted, order: DESC}, filter: { dateCompleted: { ne: null } }) {
+       allMovies: allContentfulMovie(sort: { fields: dateCompleted, order: DESC }, filter: { dateCompleted: { ne: null } }) {
             edges {
                 node {
                     title

@@ -1,16 +1,10 @@
 import React from 'react';
-import { daysWatched } from '../utils/date';
+import PropTypes from 'prop-types';
+import CTAButton from './cta-button';
+import { Stat } from '../pages/stats';
+import { averageDays, averageRating, moviesByGenre } from '../pages/stats';
 
-function Stat({label, value}) {
-    return (
-        <div className="max-w-1/4 flex flex-col text-center">
-            <span className="text-sm">{label}</span>
-            <span className="text-3xl">{value}</span>
-        </div>
-    )
-}
-
-export default ({ movies }) => {
+const MoviesOverview = ({ movies, showLink }) => {
     const year = new Date().getUTCFullYear();
     const completed = movies.filter(movie => movie.node.dateCompleted);
     const currentYear = completed.filter((movie) => {
@@ -41,7 +35,7 @@ export default ({ movies }) => {
                 <div className="flex flex-col">
                     <span className="text-lg self-center">Last 90 Days</span>
                     <ol className="list-decimal pl-6 mt-2">
-                        {completed && genreList(
+                        {completed && moviesByGenre(
                             completed.filter(movie => {
                                 const days = 90;
                                 const dateCompleted = new Date(movie.node.dateCompleted);
@@ -52,14 +46,14 @@ export default ({ movies }) => {
                         )
                         .slice(0, 5)
                         .map((genre, i) => {
-                            return <li key={i}>{genre}</li>
+                            return <li key={i}>{genre.name}</li>
                         })}
                     </ol>
                 </div>
                 <div className="flex flex-col">
                     <span className="text-lg self-center">Last 365 Days</span>
                     <ol className="list-decimal pl-6 mt-2">
-                        {completed && genreList(
+                        {completed && moviesByGenre(
                             completed.filter(movie => {
                                 const days = 365;
                                 const dateCompleted = new Date(movie.node.dateCompleted);
@@ -70,69 +64,32 @@ export default ({ movies }) => {
                         )
                         .slice(0, 5)
                         .map((genre, i) => {
-                            return <li key={i}>{genre}</li>
+                            return <li key={i}>{genre.name}</li>
                         })}
                     </ol>
                 </div>
                 <div className="flex flex-col">
                     <span className="text-lg self-center">All-Time</span>
                     <ol className="list-decimal pl-6 mt-2">
-                        {completed && genreList(completed).slice(0, 5).map((genre, i) => {
-                            return <li key={i}>{genre}</li>
+                        {completed && moviesByGenre(completed).slice(0, 5).map((genre, i) => {
+                            return <li key={i}>{genre.name}</li>
                         })}
                     </ol>
                 </div>
             </div>
+
+            {showLink && <CTAButton className="w-full mt-4" to="stats" text="All Stats" />}
         </div>
     )
 }
 
-function averageRating(movies) {
-    if (movies.length === 0) {
-        return 'n/a';
-    }
-
-    const total = movies.reduce((total, next) => {
-        return total + next.node.rating;
-    }, 0);
-    const average = total / movies.length;
-    return average.toFixed(2);
+MoviesOverview.propTypes = {
+    movies: PropTypes.array.isRequired,
+    showLink: PropTypes.bool
 }
 
-function averageDays(movies) {
-    if (movies.length === 0) {
-        return 'n/a';
-    }
-
-    const total = movies.reduce((total, next) => {
-        return total + daysWatched(next.node.dateStarted, next.node.dateCompleted);
-    }, 0);
-    const average = total / movies.length;
-    return average.toFixed(1);
+MoviesOverview.defaultProps = {
+    showButton: false
 }
 
-function genreList(movies) {
-    if (!movies) {
-        return 'n/a';
-    }
-
-    const genres = {};
-    movies.forEach((movie, index) => {
-        const { node: { genre } } = movie;
-        if (genre) {
-            genre.forEach(({ name }) => {
-                if (!genres[name]) {
-                    genres[name] = 1;
-                } else {
-                    genres[name]++;
-                }
-            });
-        }
-    });
-
-    const sortedGenres = Object.keys(genres).sort((a, b) => {
-        return genres[b] - genres[a];
-    });
-
-    return sortedGenres;
-}
+export default MoviesOverview;
