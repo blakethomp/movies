@@ -7,7 +7,7 @@ if (process.env.ENVIRONMENT !== "production") {
 
 module.exports = function (migration) {
     const apiKey = process.env.omdbKey;
-    // Simplistic function deducing a category from a tag name.
+    // Get movie data from OMDB API.
     async function getMovie(imdbId) {
         if (apiKey && imdbId) {
             try {
@@ -20,12 +20,10 @@ module.exports = function (migration) {
         }
     }
 
-    // Derives categories based on tags and links these back to blog post entries.
+    // Use IMDb ID to get OMDB data and populate field.
     migration.transformEntries({
-        // Start from blog post's tags field
         contentType: 'movie',
         from: ['imdb'],
-        // We'll only create a category using a name for now.
         to: ['omdb'],
         transformEntryForLocale: async (from, locale) => {
             const matches = from.imdb[locale].match(/imdb\.com\/title\/(tt[^/]*)/);
