@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { graphql } from 'gatsby';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend, Tooltip } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import Layout from '../components/layout';
 import MoviesInProgress from '../components/movies-in-progress';
 import { daysWatched } from '../utils/date';
@@ -22,20 +22,38 @@ const StatsPage = ({data: { allMovies: { edges: allMovies }, pageContext}}) => {
                         <Stat label="Average Days to Finish" value={averageDays(completed)} />
                         <Stat label="Did Not Finish" value={didNotFinish.length} />
                     </div>
-                    <h2>Movies By Genre</h2>
-                    <ResponsiveContainer width="100%" height={genres.length * 50}>
+
+                    <h2>Viewings By Genre</h2>
+                    <ResponsiveContainer width="100%" height={genres.length * 30}>
                         <BarChart
                             data={genres}
                             layout="vertical"
                             margin={{ top: 5, right: 5, bottom: 5, left: 60 }}
+                            barSize={15}
                         >
-                            <YAxis type="category" dataKey="name"  />
+                            <YAxis type="category" dataKey="name" interval={0}  />
                             <XAxis type="number" />
                             <Tooltip />
                             <Legend />
                             <Bar dataKey="movies.length" name="viewings" fill={defaultTheme.colors.green[700]} />
                         </BarChart>
                     </ResponsiveContainer>
+
+                    <div className="my-8 h-px" />
+
+                    <h2>Average Rating by Genre</h2>
+                    <ResponsiveContainer width="100%" height={genres.length * 30}>
+                        <RadarChart data={genres} startAngle={80} endAngle={-280}>
+                            <PolarGrid stroke={defaultTheme.colors.blue[200]} />
+                            <PolarAngleAxis dataKey="name" />
+                            <PolarRadiusAxis tick={{ fill: defaultTheme.colors.yellow[600] }} axisLine={false} orientation="left" type="number" angle={90} domain={[1, 5]} />
+                            <Radar name="Rating" dataKey="rating" stroke={defaultTheme.colors.blue[700]} fill={defaultTheme.colors.blue[600]} fillOpacity={0.2} dot={true} />
+                            <Tooltip />
+                        </RadarChart>
+                    </ResponsiveContainer>
+
+                    <div className="my-8 h-px" />
+
                     {didNotFinish.length > 0 &&
                         <>
                             <h2>Did Not Finish</h2>
@@ -103,14 +121,14 @@ Stat.propTypes = {
 
 export function averageRating(movies) {
     if (movies.length === 0) {
-        return 'n/a';
+        return 0;
     }
 
     const total = movies.reduce((total, next) => {
         return total + next.node.rating;
     }, 0);
     const average = total / movies.length;
-    return average.toFixed(2);
+    return parseFloat(average.toFixed(2));
 }
 
 export function averageDays(movies) {
@@ -122,7 +140,7 @@ export function averageDays(movies) {
         return total + daysWatched(next.node.dateStarted, next.node.dateCompleted);
     }, 0);
     const average = total / movies.length;
-    return average.toFixed(1);
+    return parseFloat(average.toFixed(1));
 }
 
 export function moviesByGenre(movies, sort = 'count') {
@@ -131,7 +149,6 @@ export function moviesByGenre(movies, sort = 'count') {
     }
 
     const genres = {};
-    const moviesByGenre = [];
 
     movies.forEach(movie => {
         const { node: { genre } } = movie;
@@ -142,12 +159,17 @@ export function moviesByGenre(movies, sort = 'count') {
                         name: name,
                         movies: [movie],
                     }
-                    moviesByGenre.push(genres[name]);
                 } else {
                     genres[name].movies.push(movie);
                 }
             });
         }
+    });
+
+    const moviesByGenre = Object.keys(genres).map(key => {
+        const genre = genres[key];
+        genre.rating = averageRating(genre.movies);
+        return genre;
     });
 
     switch (sort) {
