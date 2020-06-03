@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'gatsby';
+import { graphql, Link } from 'gatsby';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import Layout from '../components/layout';
 import MoviesInProgress from '../components/movies-in-progress';
 import { daysWatched } from '../utils/date';
 import defaultTheme from 'tailwindcss/defaultTheme';
+import Watchlist from '../components/movies-watchlist';
 
 const StatsPage = ({data: { allMovies: { edges: allMovies }, pageContext}}) => {
     const didNotFinish = allMovies.filter(movie => movie.node.didNotFinish);
@@ -17,7 +18,7 @@ const StatsPage = ({data: { allMovies: { edges: allMovies }, pageContext}}) => {
             <div className="flex flex-wrap md:flex-no-wrap">
                 <div className="w-full max-w-screen-md md:pr-8">
                     <div className="flex flex-wrap justify-between mb-8">
-                        <Stat label="Watched" value={completed.length} />
+                        <Stat label="Watched" to="all" value={completed.length} />
                         <Stat label="Average Rating" value={averageRating(completed)} />
                         <Stat label="Average Days to Finish" value={averageDays(completed)} />
                         <Stat label="Did Not Finish" value={didNotFinish.length} />
@@ -71,6 +72,7 @@ const StatsPage = ({data: { allMovies: { edges: allMovies }, pageContext}}) => {
                 </div>
                 <div className="w-full md:w-40 mt-4 md:mt-0 ml-auto md:flex-none">
                     <MoviesInProgress />
+                    <Watchlist />
                 </div>
             </div>
         </Layout>
@@ -102,10 +104,12 @@ export const pageQuery = graphql`
     }
 `
 
-export const Stat = ({ label, value }) => {
+export const Stat = ({ label, value, to }) => {
+    const labelEl = <span className="block text-sm">{label}</span>;
+
     return (
         <div className="max-w-1/4 flex flex-col text-center">
-            <span className="text-sm">{label}</span>
+            {to ? <Link to={to}>{labelEl}</Link> : labelEl}
             <span className="text-3xl">{value}</span>
         </div>
     )
@@ -116,7 +120,8 @@ Stat.propTypes = {
     value: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string
-    ]).isRequired
+    ]).isRequired,
+    to: PropTypes.string
 }
 
 export function averageRating(movies) {
