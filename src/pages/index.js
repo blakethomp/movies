@@ -6,9 +6,9 @@ import MoviesInProgress from '../components/movies-in-progress';
 import MoviesOverview from '../components/movies-overview';
 import Watchlist from '../components/movies-watchlist';
 
-const HomePage = ({data: { site, allMovies: { edges: allMovies }, pageContext}}) => {
+const HomePage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
     return (
-        <Layout>
+        <Layout path={path}>
             <div className="flex flex-wrap md:flex-no-wrap">
                 <div className="w-full max-w-screen-md md:pr-8">
                     <MoviesOverview movies={allMovies} showLink={true} />

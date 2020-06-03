@@ -3,9 +3,9 @@ import { graphql } from "gatsby";
 import Layout from '../components/layout';
 import MoviesList from "../components/movies-list";
 
-const HomePage = ({data: { allMovies: { edges: allMovies }, pageContext}}) => {
+const HomePage = ({data: { allMovies: { edges: allMovies } }, path }) => {
     return (
-        <Layout title="All Movies">
+        <Layout title="All Movies" path={path}>
             <MoviesList movies={allMovies} />
         </Layout>
     )

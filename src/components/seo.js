@@ -1,24 +1,14 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { graphql, useStaticQuery } from 'gatsby';
 import PropTypes from 'prop-types';
+import { useSiteMetadata } from '../hooks/use-site-metadata';
 
 const SEO = ({ title, description }) => {
-    const { site } = useStaticQuery(
-        graphql`
-            query {
-                site {
-                    siteMetadata {
-                        title
-                    }
-                }
-            }
-        `
-    )
+    const { title: siteTitle } = useSiteMetadata();
 
     return (
         <Helmet>
-            <title>{title ? `${title} | ${site.siteMetadata.title}` : site.siteMetadata.title}</title>
+            <title>{title ? `${title} | ${siteTitle}` : siteTitle}</title>
         </Helmet>
     )
 }

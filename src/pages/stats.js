@@ -8,13 +8,13 @@ import { daysWatched } from '../utils/date';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import Watchlist from '../components/movies-watchlist';
 
-const StatsPage = ({data: { allMovies: { edges: allMovies }, pageContext}}) => {
+const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
     const didNotFinish = allMovies.filter(movie => movie.node.didNotFinish);
     const completed = allMovies.filter(movie => movie.node.dateCompleted);
     const genres = moviesByGenre(completed);
 
     return (
-        <Layout title="Stats">
+        <Layout title="Stats" path={path}>
             <div className="flex flex-wrap md:flex-no-wrap">
                 <div className="w-full max-w-screen-md md:pr-8">
                     <div className="flex flex-wrap justify-between mb-8">
