@@ -224,7 +224,7 @@ function moviesByGenreByMonth(movies) {
 
 const ViewingsByMonth = ({ movies }) => {
     const data = moviesByMonth(movies);
-console.log(data);
+
     return (
         <>
             <h2>Viewings By Month</h2>
