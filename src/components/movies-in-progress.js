@@ -30,7 +30,7 @@ const MoviesUnfinished = () => (
             return (
                 <>
                     <h2 className="text-2xl">In Progress</h2>
-                    <ul className="mt-4">
+                    <ul className="my-4">
                         {movies.map(({ node: movie }, i) => {
                             return (
                                 <li key={i} className={ `${i > 0 ? 'mt-6' : ''}`}>
