@@ -24,6 +24,10 @@ a {
     @apply text-blue-600 underline;
 }
 
+.tooltip {
+    opacity: 1 !important;
+}
+
 @tailwind components;
 
 @tailwind utilities;

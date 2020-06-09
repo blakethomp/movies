@@ -22,13 +22,22 @@ const MoviesRecent = () => {
                                 imdb
                                 omdb {
                                     Title
+                                    Year
                                     Plot
                                     Poster
+                                    Genre
                                     Ratings {
                                         Source
                                         Value
                                     }
                                     Rated
+                                    Director
+                                    Writer
+                                    Actors
+                                    Country
+                                    Language
+                                    Awards
+                                    Runtime
                                 }
                             }
                         }
