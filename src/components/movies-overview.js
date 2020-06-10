@@ -30,51 +30,53 @@ const MoviesOverview = ({ movies, showLink }) => {
             <Stat label="Average Days to Finish" value={averageDays(completed)} />
             <Stat label="Did Not Finish" value={didNotFinish.length} />
 
-            <div className="w-full mt-8 flex flex-row flex-wrap justify-around p-6 bg-blue-800 text-white rounded-lg">
-                <h3 className="w-full text-2xl mb-4 text-center">Top Genres</h3>
-                <div className="flex flex-col">
-                    <span className="text-lg self-center">Last 90 Days</span>
-                    <ol className="list-decimal pl-6 mt-2">
-                        {completed && moviesByGenre(
-                            completed.filter(movie => {
-                                const days = 90;
-                                const dateCompleted = new Date(movie.node.dateCompleted);
-                                dateCompleted.setTime(dateCompleted.getTime() + (days * 24 * 60 * 60 * 1000));
-                                const today = new Date();
-                                return dateCompleted >= today;
-                            })
-                        )
-                        .slice(0, 5)
-                        .map((genre, i) => {
-                            return <li key={i}>{genre.name}</li>
-                        })}
-                    </ol>
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-lg self-center">Last 365 Days</span>
-                    <ol className="list-decimal pl-6 mt-2">
-                        {completed && moviesByGenre(
-                            completed.filter(movie => {
-                                const days = 365;
-                                const dateCompleted = new Date(movie.node.dateCompleted);
-                                dateCompleted.setTime(dateCompleted.getTime() + (days * 24 * 60 * 60 * 1000));
-                                const today = new Date();
-                                return dateCompleted >= today;
-                            })
-                        )
-                        .slice(0, 5)
-                        .map((genre, i) => {
-                            return <li key={i}>{genre.name}</li>
-                        })}
-                    </ol>
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-lg self-center">All-Time</span>
-                    <ol className="list-decimal pl-6 mt-2">
-                        {completed && moviesByGenre(completed).slice(0, 5).map((genre, i) => {
-                            return <li key={i}>{genre.name}</li>
-                        })}
-                    </ol>
+            <div className="w-full mt-8 p-4 lg:p-6 bg-blue-800 text-white rounded-lg">
+                <h3 className="ms-xl text-center">Top Genres</h3>
+                <div className="flex flex-col xs:flex-row flex-wrap justify-around">
+                    <div className="flex flex-col mt-4 items-center xs:items-start">
+                        <span className="ms-lg self-center">Last 90 Days</span>
+                        <ol className="list-decimal pl-6 mt-2">
+                            {completed && moviesByGenre(
+                                completed.filter(movie => {
+                                    const days = 90;
+                                    const dateCompleted = new Date(movie.node.dateCompleted);
+                                    dateCompleted.setTime(dateCompleted.getTime() + (days * 24 * 60 * 60 * 1000));
+                                    const today = new Date();
+                                    return dateCompleted >= today;
+                                })
+                            )
+                            .slice(0, 5)
+                            .map((genre, i) => {
+                                return <li key={genre.name}>{genre.name}</li>
+                            })}
+                        </ol>
+                    </div>
+                    <div className="flex flex-col mt-4 items-center xs:items-start">
+                        <span className="ms-lg self-center">Last 365 Days</span>
+                        <ol className="list-decimal pl-6 mt-2">
+                            {completed && moviesByGenre(
+                                completed.filter(movie => {
+                                    const days = 365;
+                                    const dateCompleted = new Date(movie.node.dateCompleted);
+                                    dateCompleted.setTime(dateCompleted.getTime() + (days * 24 * 60 * 60 * 1000));
+                                    const today = new Date();
+                                    return dateCompleted >= today;
+                                })
+                            )
+                            .slice(0, 5)
+                            .map((genre, i) => {
+                                return <li key={genre.name}>{genre.name}</li>
+                            })}
+                        </ol>
+                    </div>
+                    <div className="flex flex-col mt-4 items-center xs:items-start">
+                        <span className="ms-lg self-center">All-Time</span>
+                        <ol className="list-decimal pl-6 mt-2">
+                            {completed && moviesByGenre(completed).slice(0, 5).map((genre, i) => {
+                                return <li key={genre.name}>{genre.name}</li>
+                            })}
+                        </ol>
+                    </div>
                 </div>
             </div>
 

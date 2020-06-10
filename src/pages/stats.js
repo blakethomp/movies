@@ -5,11 +5,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend, Tooltip, Rada
 import moment from 'moment';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import Layout from '../components/layout';
-import MoviesInProgress from '../components/movies-in-progress';
-import Watchlist from '../components/movies-watchlist';
 import { daysWatched } from '../utils/date';
-
-import styles from './stats.module.css';
 
 const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
     const didNotFinish = allMovies.filter(movie => movie.node.didNotFinish);
@@ -18,53 +14,45 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
 
     return (
         <Layout title="Stats" path={path}>
-            <div className="flex flex-wrap md:flex-no-wrap">
-                <div className={`w-full md:pr-8 ${styles.body}`}>
-                    <div className="flex flex-wrap justify-between mb-8">
-                        <Stat label="Watched" to="all" value={completed.length} />
-                        <Stat label="Average Rating" value={averageRating(completed)} />
-                        <Stat label="Average Days to Finish" value={averageDays(completed)} />
-                        <Stat label="Did Not Finish" value={didNotFinish.length} />
-                    </div>
-
-                    <ViewingsByMonth movies={completed} />
-
-                    <ViewingsByGenre genres={genres} />
-
-                    <div className="my-8 h-px" />
-
-                    <AvgRatingByGenre genres={genres} />
-
-                    <div className="my-8 h-px" />
-
-                    <GenresOverTime movies={completed} genres={genres} />
-
-                    <div className="my-8 h-px" />
-
-                    <DisappointmentDelight movies={completed} />
-
-                    <div className="my-8 h-px" />
-
-                    {didNotFinish.length > 0 &&
-                        <>
-                            <h2>Did Not Finish</h2>
-                            <p>I started these at some point, but probably won't bother to finish them...</p>
-                            <ul className="mt-4 mb-8 list-disc pl-4">
-                                {didNotFinish
-                                    .sort((a, b) => a.node.omdb.Title.localeCompare(b.node.omdb.Title))
-                                    .map(({ node: movie }, i) => (
-                                        <li key={movie.omdb.Title}>{movie.omdb.Title} ({movie.omdb.Year})</li>
-                                    ))
-                                }
-                            </ul>
-                        </>
-                    }
-                </div>
-                <div className="w-full md:w-40 mt-4 md:mt-0 ml-auto md:flex-none">
-                    <MoviesInProgress />
-                    <Watchlist />
-                </div>
+            <div className="flex flex-wrap justify-between mb-8">
+                <Stat label="Watched" to="all" value={completed.length} />
+                <Stat label="Average Rating" value={averageRating(completed)} />
+                <Stat label="Average Days to Finish" value={averageDays(completed)} />
+                <Stat label="Did Not Finish" value={didNotFinish.length} />
             </div>
+
+            <ViewingsByMonth movies={completed} />
+
+            <ViewingsByGenre genres={genres} />
+
+            <div className="my-8 h-px" />
+
+            <AvgRatingByGenre genres={genres} />
+
+            <div className="my-8 h-px" />
+
+            <GenresOverTime movies={completed} genres={genres} />
+
+            <div className="my-8 h-px" />
+
+            <DisappointmentDelight movies={completed} />
+
+            <div className="my-8 h-px" />
+
+            {didNotFinish.length > 0 &&
+                <>
+                    <h2>Did Not Finish</h2>
+                    <p>I started these at some point, but probably won't bother to finish them...</p>
+                    <ul className="mt-4 mb-8 list-disc pl-4">
+                        {didNotFinish
+                            .sort((a, b) => a.node.omdb.Title.localeCompare(b.node.omdb.Title))
+                            .map(({ node: movie }, i) => (
+                                <li key={movie.omdb.Title}>{movie.omdb.Title} ({movie.omdb.Year})</li>
+                            ))
+                        }
+                    </ul>
+                </>
+            }
         </Layout>
     )
 }
@@ -99,7 +87,7 @@ export const Stat = ({ label, value, to }) => {
     const labelEl = <span className="block text-sm">{label}</span>;
 
     return (
-        <div className="w-1/2 md:w-auto md:max-w-1/4 flex flex-col text-center mt-4 md:mt-0">
+        <div className="w-1/2 sm:w-auto sm:max-w-1/4 flex flex-col text-center mt-4 sm:mt-0">
             {to ? <Link to={to}>{labelEl}</Link> : labelEl}
             <span className="text-3xl">{value}</span>
         </div>

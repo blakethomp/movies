@@ -1,4 +1,4 @@
-// const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme')
 // const ms = require('@tailwindcss-modularscale/index');
 
 module.exports = {
@@ -9,6 +9,15 @@ module.exports = {
       display: ['Limelight', 'sans-serif']
     },
     extend: {
+    },
+    screens: {
+      ...defaultTheme.screens,
+      xs: '520px',
+      md: [
+        {'min': '668px', 'max': '767px'},
+        {'min': '868px'}
+      ],
+      sidebar: defaultTheme.screens.md
     }
   },
   variants: {},

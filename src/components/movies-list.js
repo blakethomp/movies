@@ -15,7 +15,7 @@ const MoviesList = ({ movies, className }) => (
                     <li key={movie.title} className={ `clearfix md:flex  ${i > 0 ? 'my-8' : ''}`}>
                         {movie.omdb.Poster &&
                             <div className="flex-none mr-4 float-left md:float-none">
-                                <a href={movie.imdb} data-tip={i} data-for="movieTooltip"><img className="w-32" src={movie.omdb.Poster} alt={`${movie.title} poster`} /></a>
+                                <a href={movie.imdb} data-tip={i} data-for="movieTooltip"><img className="w-24 md:w-32" src={movie.omdb.Poster} alt={`${movie.title} poster`} /></a>
                             </div>
                         }
                         <div className="md:flex flex-col flex-grow">
@@ -24,13 +24,13 @@ const MoviesList = ({ movies, className }) => (
                             </h3>
                             <p>{movie.omdb.Plot}</p>
                             {movie.notes &&
-                                <div className="my-4"><strong>Thoughts:</strong> {documentToPlainTextString(movie.notes.json)}</div>
+                                <div className="mt-4"><strong>Thoughts:</strong> {documentToPlainTextString(movie.notes.json)}</div>
                             }
-                            <div className="mt-auto flex flex-row flex-wrap justify-between">
-                                <div>
+                            <div className="clear-left mt-auto flex flex-row flex-wrap justify-between">
+                                <div className="mt-4">
                                     <strong>Finished:</strong> {displayDate(movie.dateCompleted)}, <em>{displayDaysWatched(movie.dateStarted, movie.dateCompleted)}</em>
                                 </div>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col mt-4 self-end">
                                     <div>
                                         <Rate value={movie.rating} disabled={true} style={{'pointerEvents': 'none'}}/>
                                         <span className={ratingColor(movie.rating, movie.expectedRating)}>({movie.expectedRating})</span>
