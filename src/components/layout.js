@@ -34,7 +34,10 @@ const Layout = ({ title, children, path, sidebar = <><MoviesInProgress /><Watchl
 
 Layout.propTypes = {
     title: PropTypes.string,
-    children: PropTypes.arrayOf(PropTypes.element),
+    children: PropTypes.oneOfType([
+        PropTypes.element,
+        PropTypes.arrayOf(PropTypes.element)
+    ]),
     path: PropTypes.string,
     sidebar: PropTypes.element
 }

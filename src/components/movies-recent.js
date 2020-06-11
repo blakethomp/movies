@@ -11,34 +11,7 @@ const MoviesRecent = () => {
                     allContentfulMovie(sort: {fields: dateCompleted, order: DESC}, filter: { dateCompleted: { ne: null } }, limit: 5) {
                         edges {
                             node {
-                                title
-                                dateStarted
-                                dateCompleted
-                                rating
-                                expectedRating
-                                notes {
-                                    json
-                                }
-                                imdb
-                                omdb {
-                                    Title
-                                    Year
-                                    Plot
-                                    Poster
-                                    Genre
-                                    Ratings {
-                                        Source
-                                        Value
-                                    }
-                                    Rated
-                                    Director
-                                    Writer
-                                    Actors
-                                    Country
-                                    Language
-                                    Awards
-                                    Runtime
-                                }
+                                ...MovieDetails
                             }
                         }
                     }

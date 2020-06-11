@@ -18,25 +18,7 @@ export const pageQuery = graphql`
        allMovies: allContentfulMovie(sort: { fields: dateCompleted, order: DESC }, filter: { dateCompleted: { ne: null } }) {
             edges {
                 node {
-                    title
-                    dateStarted
-                    dateCompleted
-                    rating
-                    expectedRating
-                    notes {
-                        json
-                    }
-                    imdb
-                    omdb {
-                        Title
-                        Plot
-                        Poster
-                        Ratings {
-                            Source
-                            Value
-                        }
-                        Rated
-                    }
+                    ...MovieDetails
                 }
             }
         }
