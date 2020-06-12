@@ -38,10 +38,10 @@ export default MovieTooltip;
 
 const MovieTooltipContent = ({ movie, tooltipRef }) => {
     return (
-        <div className="flex flex-col sidebar:block w-full py-1">
+        <div className="flex flex-col md:block w-full py-1">
             <button className="inline-block absolute top-0 right-0 p-2 mr-2" title="Close" onClick={() => tooltipRef.current.setState({show: false})}>X</button>
             {movie.omdb.Ratings.length > 0 &&
-                <div className="md:w-64 mt-4 sidebar:mt-8 sidebar:float-right sidebar:ml-3 sidebar:mb-1 order-1">
+                <div className="md:w-64 mt-4 md:mt-8 md:float-right md:ml-3 md:mb-1 order-1">
                     <div className="p-3 border border-solid rounded">
                         <h3 className="text-base mb-2">Is it good?</h3>
                         <ul>
