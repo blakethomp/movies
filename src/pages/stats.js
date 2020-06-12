@@ -37,6 +37,10 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
 
             <div className="my-8 h-px" />
 
+            <GenresOverTimeCumulative movies={completed} genres={genres} />
+
+            <div className="my-8 h-px" />
+
             <DisappointmentDelight movies={completed} />
 
             <div className="my-8 h-px" />
@@ -200,18 +204,29 @@ export function moviesByMonth(movies) {
     return moviesByMonth;
 }
 
-function moviesByGenreByMonth(movies) {
+function moviesByGenreByMonth(movies, cumulative = false) {
     if (!movies) {
         return;
     }
 
     const moviesByDate = moviesByMonth(movies);
+    const genresCount = {};
 
     const moviesByDateByMonth = moviesByDate.map(month => {
         const moviesForGenre = moviesByGenre(month.movies);
         moviesForGenre.forEach(genre => {
-            month[genre.name] = genre.movies.length;
+            if (!genresCount[genre.name]) {
+                genresCount[genre.name] = 0;
+            }
+            genresCount[genre.name] += genre.movies.length;
+            month[genre.name] = cumulative ? genresCount[genre.name] : genre.movies.length;
         });
+
+        if (cumulative) {
+            Object.keys(genresCount).filter(key => !Object.keys(month).includes(key)).forEach(genreName => {
+                month[genreName] = genresCount[genreName];
+            });
+        }
         return month;
     });
 
@@ -303,6 +318,41 @@ const GenresOverTime = ({ movies, genres }) => {
         <>
             <h2>Genres over Time</h2>
             <ResponsiveContainer width="100%" height={500}>
+                <BarChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" height={70} />
+                    <YAxis label={{ value: 'Viewings', angle: -90, position: 'insideLeft' }} />
+                    <Tooltip />
+                    <Legend verticalAlign="bottom" chartHeight={250} />
+                    {genres.map((genre, index) => {
+                        const colorWeight = 500 + (100 * Math.floor(index / colors.length));
+                        const colorIndex = index % colors.length;
+                        return (
+                            <Bar key={genre.name} type="monotone" stackId="genre" dataKey={genre.name} fill={defaultTheme.colors[ colors[colorIndex] ][colorWeight]} />
+                        )
+                    })}
+                </BarChart>
+            </ResponsiveContainer>
+        </>
+    )
+}
+
+GenresOverTime.propTypes = {
+    movies: PropTypes.array.isRequired,
+    genres: PropTypes.array.isRequired
+}
+
+const GenresOverTimeCumulative = ({ movies, genres }) => {
+    const data = moviesByGenreByMonth(movies, true);
+    const excludedColors = ['black', 'indigo', 'white', 'transparent', 'current'];
+    const colors = Object.keys(defaultTheme.colors).filter(
+        color => excludedColors.indexOf(color) === -1
+    );
+
+    return (
+        <>
+            <h2>Genres over Time (Cumulative)</h2>
+            <ResponsiveContainer width="100%" height={500}>
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="label" height={70} />
@@ -322,7 +372,7 @@ const GenresOverTime = ({ movies, genres }) => {
     )
 }
 
-GenresOverTime.propTypes = {
+GenresOverTimeCumulative.propTypes = {
     movies: PropTypes.array.isRequired,
     genres: PropTypes.array.isRequired
 }

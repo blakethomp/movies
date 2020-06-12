@@ -21,6 +21,7 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-postcss`,
+    `gatsby-plugin-bundle-stats`,
     {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
