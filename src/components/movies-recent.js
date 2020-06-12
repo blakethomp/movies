@@ -11,7 +11,7 @@ const MoviesRecent = () => {
                     allContentfulMovie(sort: {fields: dateCompleted, order: DESC}, filter: { dateCompleted: { ne: null } }, limit: 5) {
                         edges {
                             node {
-                                ...MovieDetails
+                                ...MovieListDetails
                             }
                         }
                     }

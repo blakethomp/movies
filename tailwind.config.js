@@ -33,7 +33,7 @@ module.exports = {
         { size: '3xl', value: 4 },
       ],
       base:  1,
-      ratio: 1.333,
+      ratio: 1.25,
       unit: 'rem',
     })
   ],

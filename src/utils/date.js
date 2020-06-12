@@ -1,6 +1,8 @@
+import moment from 'moment';
+
 export function displayDate(dateString) {
-    const date = new Date(dateString);
-    return `${date.getUTCMonth() + 1}/${date.getUTCDate()}/${date.getUTCFullYear()}`;
+    const date = moment.utc(new Date(dateString));
+    return `${date.format('MM/DD/YY')}`
 }
 
 export function daysWatched(startDateStr, endDateStr) {

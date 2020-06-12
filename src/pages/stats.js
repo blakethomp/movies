@@ -23,6 +23,8 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
 
             <ViewingsByMonth movies={completed} />
 
+            <div className="my-8 h-px" />
+
             <ViewingsByGenre genres={genres} />
 
             <div className="my-8 h-px" />
@@ -179,10 +181,10 @@ export function moviesByMonth(movies) {
         const { node: { dateCompleted } } = movie;
         if (dateCompleted) {
             const date = moment.utc(new Date(dateCompleted));
-            const key = `${date.format('YYYY')}-${date.format('MM')}`
+            const key = `${date.format('YYYY-MM')}`
             if (!months[key]) {
                 months[key] = {
-                    label: `${date.format('MMM')} ${date.format('YYYY')}`,
+                    label: `${date.format('MMM YYYY')}`,
                     movies: [movie],
                     date: `${key}-01`,
                 }
@@ -232,7 +234,7 @@ const ViewingsByMonth = ({ movies }) => {
                     <XAxis type="category" dataKey="label" />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="movies.length" name="Viewings" fill={defaultTheme.colors.green[400]} />
+                    <Bar dataKey="movies.length" name="Viewings" fill={defaultTheme.colors.indigo[500]} />
                 </BarChart>
             </ResponsiveContainer>
         </>
@@ -258,7 +260,7 @@ const ViewingsByGenre = ({ genres }) => {
                     <XAxis type="number" />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="movies.length" name="Viewings" fill={defaultTheme.colors.green[700]} />
+                    <Bar dataKey="movies.length" name="Viewings" fill={defaultTheme.colors.red[500]} />
                 </BarChart>
             </ResponsiveContainer>
         </>

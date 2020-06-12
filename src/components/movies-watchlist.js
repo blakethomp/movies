@@ -34,7 +34,7 @@ const Watchlist = () => {
                                     <li key={i} className={ `${i > 0 ? 'mt-2' : ''}`}>
                                         <h3 className="text-sm leading-tight"><a href={movie.url} className="no-underline hover:underline">{movie.title} ({movie.year})</a></h3>
                                         <div className="text-xs italic">{movie.genre}</div>
-                                        <div className="text-xs"><strong>Rating: </strong>{movie.rating}/10</div>
+                                        <div className="text-xs"><strong>Rating: </strong>{movie.rating ? `${movie.rating}/10` : 'n/a'}</div>
                                     </li>
                                 )
                             })}

@@ -18,7 +18,7 @@ export const pageQuery = graphql`
        allMovies: allContentfulMovie(sort: { fields: dateCompleted, order: DESC }, filter: { dateCompleted: { ne: null } }) {
             edges {
                 node {
-                    ...MovieDetails
+                    ...MovieListDetails
                 }
             }
         }

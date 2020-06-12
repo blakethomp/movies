@@ -26,12 +26,12 @@ a {
 
 .tooltip {
     opacity: 1 !important;
-    width: calc(100% - 9rem);
+    @apply w-10/12;
 }
 
 @screen sidebar {
     .tooltip {
-        @apply w-8/12 max-w-screen-sidebar;
+        @apply w-8/12 max-w-screen-sm;
 
     }
 }
