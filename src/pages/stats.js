@@ -45,6 +45,10 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
 
             <div className="my-8 h-px" />
 
+            <FrequentCastCrew movies={completed} />
+
+            <div className="my-8 h-px" />
+
             {didNotFinish.length > 0 &&
                 <>
                     <h2>Did Not Finish</h2>
@@ -78,11 +82,7 @@ export const pageQuery = graphql`
                         name
                     }
                     didNotFinish
-                    omdb {
-                        Title
-                        Year
-                    }
-                    imdb
+                    ...MovieDetails
                 }
             }
         }
@@ -480,4 +480,79 @@ const DisappointmentDelight = ({ movies }) => {
 
 DisappointmentDelight.propTypes = {
     movies: PropTypes.array.isRequired
+}
+
+const FrequentCastCrew = ({ movies }) => {
+    const castCount = {};
+    const directorCount = {};
+    const writerCount = {};
+    movies.map(({ node: movie }) => {
+        const cast = movie.omdb.Actors.split(', ');
+        cast.map(name => {
+            if (!castCount[name]) {
+                castCount[name] = 0;
+            }
+            castCount[name]++;
+            return null;
+        })
+
+        const director = movie.omdb.Director.split(', ');
+        director.map(name => {
+            if (!directorCount[name]) {
+                directorCount[name] = 0;
+            }
+            directorCount[name]++;
+            return null;
+        })
+
+        // Writers can be on the same movie screenplay, story, etc. Filter out duplicates.
+        const writer = [...new Set(movie.omdb.Writer.split(', ').map(name => name.replace(/\s\(.*?\)$/, '')))];
+        writer.map(name => {
+            if (!writerCount[name]) {
+                writerCount[name] = 0;
+            }
+            writerCount[name]++;
+            return null;
+        })
+        return null;
+    });
+
+    const orderedCast = Object.keys(castCount).sort((a, b) => castCount[b] - castCount[a]).map(name => { return {name: name, count: castCount[name]}});
+    const castThreshold = orderedCast.slice(0, Math.ceil(orderedCast.length / 3 / 2)).reverse()[0].count;
+    const orderedDirectors = Object.keys(directorCount).sort((a, b) => directorCount[b] - directorCount[a]).map(name => { return {name: name, count: directorCount[name]}});
+    const directorThreshold = orderedDirectors.slice(0, Math.ceil(orderedDirectors.length / 3 / 2)).reverse()[0].count;
+    const orderedWriters = Object.keys(writerCount).sort((a, b) => writerCount[b] - writerCount[a]).map(name => { return {name: name, count: writerCount[name]}});
+    const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
+
+    return (
+        <>
+            <h2>Frequent People</h2>
+            <div className="flex flex-col xs:flex-row flex-wrap justify-between">
+                <div className="flex flex-col mt-4 items-center xs:items-start">
+                    <h3>Cast</h3>
+                    <ul className="">
+                        {orderedCast.filter(person => person.count >= (castThreshold === 1 ? 2 : castThreshold)).map(person => {
+                            return <li key={person.name}>{person.name} ({person.count})</li>
+                        })}
+                    </ul>
+                </div>
+                <div className="flex flex-col mt-4 items-center xs:items-start">
+                    <h3>Directors</h3>
+                    <ul className="">
+                        {orderedDirectors.filter(person => person.count >= (directorThreshold === 1 ? 2 : directorThreshold)).map(person => {
+                            return <li key={person.name}>{person.name} ({person.count})</li>
+                        })}
+                    </ul>
+                </div>
+                <div className="flex flex-col mt-4 items-center xs:items-start">
+                    <h3>Writers</h3>
+                    <ul className="">
+                        {orderedWriters.filter(person => person.count >= (writerThreshold === 1 ? 2 : writerThreshold)).map(person => {
+                            return <li key={person.name}>{person.name} ({person.count})</li>
+                        })}
+                    </ul>
+                </div>
+            </div>
+        </>
+    )
 }
