@@ -7,10 +7,10 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import Layout from '../components/layout';
 import { daysWatched } from '../utils/date';
 
-const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
-    const didNotFinish = allMovies.filter(movie => movie.node.didNotFinish);
-    const completed = allMovies.filter(movie => movie.node.dateCompleted);
-    const genres = moviesByGenre(completed);
+const StatsPage = ({ data: { allViewings: { edges: allViewings } }, path }) => {
+    const didNotFinish = allViewings.filter(viewing => viewing.node.didNotFinish);
+    const completed = allViewings.filter(viewing => viewing.node.dateCompleted);
+    const genres = viewingsByGenre(completed);
 
     return (
         <Layout title="Stats" path={path}>
@@ -21,7 +21,7 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
                 <Stat label="Did Not Finish" value={didNotFinish.length} />
             </div>
 
-            <ViewingsByMonth movies={completed} />
+            <ViewingsByMonth viewings={completed} />
 
             <div className="my-8 h-px" />
 
@@ -33,19 +33,19 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
 
             <div className="my-8 h-px" />
 
-            <GenresOverTime movies={completed} genres={genres} />
+            <GenresOverTime viewings={completed} genres={genres} />
 
             <div className="my-8 h-px" />
 
-            <GenresOverTimeCumulative movies={completed} genres={genres} />
+            <GenresOverTimeCumulative viewings={completed} genres={genres} />
 
             <div className="my-8 h-px" />
 
-            <DisappointmentDelight movies={completed} />
+            <DisappointmentDelight viewings={completed} />
 
             <div className="my-8 h-px" />
 
-            <FrequentCastCrew movies={completed} />
+            <FrequentCastCrew viewings={completed} />
 
             <div className="my-8 h-px" />
 
@@ -55,9 +55,9 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
                     <p>I started these at some point, but probably won't bother to finish them...</p>
                     <ul className="mt-4 mb-8 list-disc pl-4">
                         {didNotFinish
-                            .sort((a, b) => a.node.omdb.Title.localeCompare(b.node.omdb.Title))
-                            .map(({ node: movie }, i) => (
-                                <li key={movie.omdb.Title}>{movie.omdb.Title} ({movie.omdb.Year})</li>
+                            .sort((a, b) => a.node.movie[0].title.localeCompare(b.node.movie[0].title))
+                            .map(({ node: { movie: [ movie ] } }) => (
+                                <li key={movie.title}>{movie.title} ({movie.omdb.Year})</li>
                             ))
                         }
                     </ul>
@@ -70,17 +70,14 @@ const StatsPage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
 export default StatsPage;
 
 export const pageQuery = graphql`
-    query allStatsMoviesQuery {
-        allMovies: allContentfulMovie(sort: { fields: dateCompleted, order: DESC }) {
+    query allStatsViewingsQuery {
+        allViewings: allContentfulViewing(sort: { fields: dateCompleted, order: DESC }) {
             edges {
                 node {
                     dateStarted
                     dateCompleted
                     rating
                     expectedRating
-                    genre {
-                        name
-                    }
                     didNotFinish
                     ...MovieDetails
                 }
@@ -109,117 +106,117 @@ Stat.propTypes = {
     to: PropTypes.string
 }
 
-export function averageRating(movies) {
-    if (movies.length === 0) {
+export function averageRating(viewings) {
+    if (viewings.length === 0) {
         return 0;
     }
 
-    const total = movies.reduce((total, next) => {
+    const total = viewings.reduce((total, next) => {
         return total + next.node.rating;
     }, 0);
-    const average = total / movies.length;
+    const average = total / viewings.length;
     return parseFloat(average.toFixed(2));
 }
 
-export function averageDays(movies) {
-    if (movies.length === 0) {
+export function averageDays(viewings) {
+    if (viewings.length === 0) {
         return 'n/a';
     }
 
-    const total = movies.reduce((total, next) => {
+    const total = viewings.reduce((total, next) => {
         return total + daysWatched(next.node.dateStarted, next.node.dateCompleted);
     }, 0);
-    const average = total / movies.length;
+    const average = total / viewings.length;
     return parseFloat(average.toFixed(1));
 }
 
-export function moviesByGenre(movies, sort = 'count') {
-    if (!movies) {
+export function viewingsByGenre(viewings, sort = 'count') {
+    if (!viewings) {
         return 'n/a';
     }
 
     const genres = {};
 
-    movies.forEach(movie => {
-        const { node: { genre } } = movie;
+    viewings.forEach(viewing => {
+        const { node: { movie: [{ genre }] } } = viewing;
         if (genre) {
             genre.forEach(({ name }) => {
                 if (!genres[name]) {
                     genres[name] = {
                         name: name,
-                        movies: [],
+                        viewings: [],
                     }
                 }
-                genres[name].movies.push(movie);
+                genres[name].viewings.push(viewing);
             });
         }
     });
 
-    const moviesByGenre = Object.keys(genres).map(key => {
+    const viewingsByGenre = Object.keys(genres).map(key => {
         const genre = genres[key];
-        genre.rating = averageRating(genre.movies);
+        genre.rating = averageRating(genre.viewings);
         return genre;
     });
 
     switch (sort) {
         case 'alpha':
-            moviesByGenre.sort((a, b) => a.name.localeCompare(b.name));
+            viewingsByGenre.sort((a, b) => a.name.localeCompare(b.name));
             break;
 
         default:
-            moviesByGenre.sort((a, b) => b.movies.length - a.movies.length);
+            viewingsByGenre.sort((a, b) => b.viewings.length - a.viewings.length);
             break;
     }
 
-    return moviesByGenre;
+    return viewingsByGenre;
 }
 
-export function moviesByMonth(movies) {
-    if (!movies) {
+export function viewingsByMonth(viewings) {
+    if (!viewings) {
         return;
     }
 
     const months = {};
 
-    movies.forEach(movie => {
-        const { node: { dateCompleted } } = movie;
+    viewings.forEach(viewing => {
+        const { node: { dateCompleted } } = viewing;
         if (dateCompleted) {
             const date = moment.utc(new Date(dateCompleted));
             const key = `${date.format('YYYY-MM')}`
             if (!months[key]) {
                 months[key] = {
                     label: `${date.format('MMM YYYY')}`,
-                    movies: [movie],
+                    viewings: [viewing],
                     date: `${key}-01`,
                 }
             } else {
-                months[key].movies.push(movie);
+                months[key].viewings.push(viewing);
             }
         }
     });
 
-    const moviesByMonth = Object.keys(months).map(key => months[key])
+    const viewingsByMonth = Object.keys(months).map(key => months[key])
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    return moviesByMonth;
+    return viewingsByMonth;
 }
 
-function moviesByGenreByMonth(movies, cumulative = false) {
-    if (!movies) {
+function viewingsByGenreByMonth(viewings, cumulative = false) {
+    if (!viewings) {
         return;
     }
 
-    const moviesByDate = moviesByMonth(movies);
+    const viewingsByDate = viewingsByMonth(viewings);
     const genresCount = {};
 
-    const moviesByDateByMonth = moviesByDate.map(month => {
-        const moviesForGenre = moviesByGenre(month.movies);
-        moviesForGenre.forEach(genre => {
+    const viewingsByDateByMonth = viewingsByDate.map(month => {
+        const viewingsForGenre = viewingsByGenre(month.viewings);
+        viewingsForGenre.forEach(genre => {
             if (!genresCount[genre.name]) {
                 genresCount[genre.name] = 0;
             }
-            genresCount[genre.name] += genre.movies.length;
-            month[genre.name] = cumulative ? genresCount[genre.name] : genre.movies.length;
+            genresCount[genre.name] += genre.viewings.length;
+            month[genre.name] = cumulative ? genresCount[genre.name] : genre.viewings.length;
         });
 
         if (cumulative) {
@@ -230,11 +227,11 @@ function moviesByGenreByMonth(movies, cumulative = false) {
         return month;
     });
 
-    return moviesByDateByMonth;
+    return viewingsByDateByMonth;
 }
 
-const ViewingsByMonth = ({ movies }) => {
-    const data = moviesByMonth(movies);
+const ViewingsByMonth = ({ viewings }) => {
+    const data = viewingsByMonth(viewings);
 
     return (
         <>
@@ -249,7 +246,7 @@ const ViewingsByMonth = ({ movies }) => {
                     <XAxis type="category" dataKey="label" />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="movies.length" name="Viewings" fill={defaultTheme.colors.indigo[500]} />
+                    <Bar dataKey="viewings.length" name="Viewings" fill={defaultTheme.colors.indigo[500]} />
                 </BarChart>
             </ResponsiveContainer>
         </>
@@ -257,7 +254,7 @@ const ViewingsByMonth = ({ movies }) => {
 }
 
 ViewingsByMonth.propTypes = {
-    movies: PropTypes.array.isRequired
+    viewings: PropTypes.array.isRequired
 }
 
 const ViewingsByGenre = ({ genres }) => {
@@ -275,7 +272,7 @@ const ViewingsByGenre = ({ genres }) => {
                     <XAxis type="number" />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="movies.length" name="Viewings" fill={defaultTheme.colors.red[500]} />
+                    <Bar dataKey="viewings.length" name="Viewings" fill={defaultTheme.colors.red[500]} />
                 </BarChart>
             </ResponsiveContainer>
         </>
@@ -307,8 +304,8 @@ AvgRatingByGenre.propTypes = {
     genres: PropTypes.array.isRequired
 }
 
-const GenresOverTime = ({ movies, genres }) => {
-    const data = moviesByGenreByMonth(movies);
+const GenresOverTime = ({ viewings, genres }) => {
+    const data = viewingsByGenreByMonth(viewings);
     const excludedColors = ['black', 'indigo', 'white', 'transparent', 'current'];
     const colors = Object.keys(defaultTheme.colors).filter(
         color => excludedColors.indexOf(color) === -1
@@ -338,12 +335,12 @@ const GenresOverTime = ({ movies, genres }) => {
 }
 
 GenresOverTime.propTypes = {
-    movies: PropTypes.array.isRequired,
+    viewings: PropTypes.array.isRequired,
     genres: PropTypes.array.isRequired
 }
 
-const GenresOverTimeCumulative = ({ movies, genres }) => {
-    const data = moviesByGenreByMonth(movies, true);
+const GenresOverTimeCumulative = ({ viewings, genres }) => {
+    const data = viewingsByGenreByMonth(viewings, true);
     const excludedColors = ['black', 'indigo', 'white', 'transparent', 'current'];
     const colors = Object.keys(defaultTheme.colors).filter(
         color => excludedColors.indexOf(color) === -1
@@ -373,12 +370,12 @@ const GenresOverTimeCumulative = ({ movies, genres }) => {
 }
 
 GenresOverTimeCumulative.propTypes = {
-    movies: PropTypes.array.isRequired,
+    viewings: PropTypes.array.isRequired,
     genres: PropTypes.array.isRequired
 }
 
-const DisappointmentDelight = ({ movies }) => {
-    const moviesByDate = moviesByMonth(movies);
+const DisappointmentDelight = ({ viewings }) => {
+    const viewingsByDate = viewingsByMonth(viewings);
     const labels = {
         1: '',
         2: 'Major',
@@ -387,11 +384,11 @@ const DisappointmentDelight = ({ movies }) => {
     }
     const movieDiffs = {};
     let overallDiff = 0;
-    const metExpectationsWeight = (movies.filter(movie => movie.node.rating - movie.node.expectedRating === 0).length / movies.length) / 3;
-    const data = moviesByDate.map(month => {
+    const metExpectationsWeight = (viewings.filter(viewing => viewing.node.rating - viewing.node.expectedRating === 0).length / viewings.length) / 3;
+    const data = viewingsByDate.map(month => {
         const diffs = {};
-        month.movies.forEach(movie => {
-            const diff = movie.node.rating - movie.node.expectedRating;
+        month.viewings.forEach(viewing => {
+            const diff = viewing.node.rating - viewing.node.expectedRating;
             if (!diffs[diff]) {
                 diffs[diff] = 0;
             }
@@ -400,7 +397,7 @@ const DisappointmentDelight = ({ movies }) => {
             }
             diffs[diff] += diff >= 0 ? 1 : -1;
             overallDiff += diff === 0 ? metExpectationsWeight : diff;
-            movieDiffs[diff].push(movie);
+            movieDiffs[diff].push(viewing);
         });
 
         return {
@@ -453,9 +450,9 @@ const DisappointmentDelight = ({ movies }) => {
                     <h3>Delights</h3>
                     <ul>
                         {Object.keys(movieDiffs).filter(diff => diff > 0).sort((a, b) => a - b).map(diff => {
-                            return movieDiffs[diff].sort((a, b) => b.node.expectedRating - a.node.expectedRating).map(movie => {
+                            return movieDiffs[diff].sort((a, b) => b.node.expectedRating - a.node.expectedRating).map(({ node: viewing, node: { movie: [ movie ] } }) => {
                                 return (
-                                    <li className="text-sm" key={movie.node.omdb.Title}><a href={movie.node.imdb}>{movie.node.omdb.Title}</a> ({movie.node.expectedRating} / {movie.node.rating})</li>
+                                    <li className="text-sm" key={movie.title}><a href={movie.imdb}>{movie.title}</a> ({viewing.expectedRating} / {viewing.rating})</li>
                                 )
                             });
                         })}
@@ -465,9 +462,9 @@ const DisappointmentDelight = ({ movies }) => {
                     <h3>Disappontments</h3>
                     <ul>
                         {Object.keys(movieDiffs).filter(diff => diff < 0).sort((a, b) => a - b).map(diff => {
-                            return movieDiffs[diff].sort((a, b) => b.node.expectedRating - a.node.expectedRating).map(movie => {
+                            return movieDiffs[diff].sort((a, b) => b.node.expectedRating - a.node.expectedRating).map(({ node: viewing, node: { movie: [ movie ] } }) => {
                                 return (
-                                    <li className="text-sm" key={movie.node.omdb.Title}><a href={movie.node.imdb}>{movie.node.omdb.Title}</a> ({movie.node.expectedRating} / {movie.node.rating})</li>
+                                    <li className="text-sm" key={movie.title}><a href={movie.imdb}>{movie.title}</a> ({viewing.expectedRating} / {viewing.rating})</li>
                                 )
                             });
                         })}
@@ -479,14 +476,14 @@ const DisappointmentDelight = ({ movies }) => {
 }
 
 DisappointmentDelight.propTypes = {
-    movies: PropTypes.array.isRequired
+    viewings: PropTypes.array.isRequired
 }
 
-const FrequentCastCrew = ({ movies }) => {
+const FrequentCastCrew = ({ viewings }) => {
     const castCount = {};
     const directorCount = {};
     const writerCount = {};
-    movies.map(({ node: movie }) => {
+    viewings.map(({ node: { movie: [ movie ] } }) => {
         const cast = movie.omdb.Actors.split(', ');
         cast.map(name => {
             if (!castCount[name]) {

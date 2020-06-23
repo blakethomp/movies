@@ -2,13 +2,13 @@ import React from 'react';
 import { Link } from 'gatsby';
 import PropTypes from 'prop-types';
 import SEO from './seo';
-import MoviesInProgress from '../components/movies-in-progress';
-import Watchlist from '../components/movies-watchlist';
+import ViewingsInProgress from './viewing-in-progress';
+import Watchlist from './movie-watchlist';
 import { useSiteMetadata } from '../hooks/use-site-metadata';
 
 import styles from './layout.module.css';
 
-const Layout = ({ title, children, path, sidebar = <><MoviesInProgress /><Watchlist /></> }) => {
+const Layout = ({ title, children, path, sidebar = <><ViewingsInProgress /><Watchlist /></> }) => {
     const { title: siteTitle } = useSiteMetadata();
 
     return (

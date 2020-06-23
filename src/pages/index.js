@@ -1,14 +1,14 @@
 import React from "react"
 import { graphql } from "gatsby";
 import Layout from '../components/layout';
-import MoviesRecent from '../components/movies-recent';
-import MoviesOverview from '../components/movies-overview';
+import ViewingsRecent from '../components/viewing-recent';
+import ViewingsOverview from '../components/viewing-overview';
 
-const HomePage = ({ data: { allMovies: { edges: allMovies } }, path }) => {
+const HomePage = ({ data: { allViewings: { edges: allViewings } }, path }) => {
     return (
         <Layout path={path}>
-            <MoviesOverview movies={allMovies} showLink={true} />
-            <MoviesRecent />
+            <ViewingsOverview viewings={allViewings} showLink={true} />
+            <ViewingsRecent />
         </Layout>
     )
 }
@@ -17,17 +17,19 @@ export default HomePage;
 
 export const pageQuery = graphql`
     query HomeQuery {
-        allMovies: allContentfulMovie(sort: { fields: dateCompleted, order: DESC }) {
+        allViewings: allContentfulViewing(sort: { fields: dateCompleted, order: DESC }) {
             edges {
                 node {
                     dateStarted
                     dateCompleted
                     rating
                     expectedRating
-                    genre {
-                        name
-                    }
                     didNotFinish
+                    movie {
+                        genre {
+                            name
+                        }
+                    }
                 }
             }
         }

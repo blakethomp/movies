@@ -1,14 +1,14 @@
 import React from 'react';
 import { StaticQuery, graphql } from "gatsby";
-import MoviesList from './movies-list';
+import ViewingsList from './viewing-list';
 import CTAButton from './cta-button';
 
-const MoviesRecent = () => {
+const ViewingsRecent = () => {
     return (
         <StaticQuery
             query={graphql`
-                query recentMovies {
-                    allContentfulMovie(sort: {fields: dateCompleted, order: DESC}, filter: { dateCompleted: { ne: null } }, limit: 5) {
+                query recentViewings {
+                    allContentfulViewing(sort: {fields: dateCompleted, order: DESC}, filter: { dateCompleted: { ne: null } }, limit: 5) {
                         edges {
                             node {
                                 ...MovieListDetails
@@ -17,11 +17,11 @@ const MoviesRecent = () => {
                     }
                 }
             `}
-            render={({ allContentfulMovie: { edges: movies }}) => {
+            render={({ allContentfulViewing: { edges: viewings }}) => {
                 return (
                     <div className="my-8">
                         <h2>Recently Finished</h2>
-                        <MoviesList movies={movies} />
+                        <ViewingsList viewings={viewings} />
                         <CTAButton to="all" text="Full Viewing History" />
                     </div>
                 )
@@ -30,4 +30,4 @@ const MoviesRecent = () => {
     )
 }
 
-export default MoviesRecent;
+export default ViewingsRecent;

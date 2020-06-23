@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 
-const MovieTooltip = ({ movies, id }) => {
+const MovieTooltip = ({ viewings, id }) => {
     const tooltipRef = useRef(null);
 
     return (
@@ -18,7 +18,7 @@ const MovieTooltip = ({ movies, id }) => {
             ref={tooltipRef}
             getContent={dataTip => {
                 if (!dataTip) return;
-                const movie = movies[dataTip].node;
+                const movie = viewings[dataTip].node.movie[0];
 
                 return (
                     <MovieTooltipContent movie={movie} tooltipRef={tooltipRef} />
@@ -30,7 +30,7 @@ const MovieTooltip = ({ movies, id }) => {
 }
 
 MovieTooltip.propTypes = {
-    movies: PropTypes.array,
+    viewings: PropTypes.array,
     id: PropTypes.string
 }
 
