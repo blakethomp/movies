@@ -75,7 +75,7 @@ const MovieTooltipContent = ({ movie, tooltipRef }) => {
                     <strong>Director(s):</strong> {movie.omdb.Director}<br/>
                     <strong>Writer(s):</strong> {movie.omdb.Writer}<br/>
                     <strong>Cast:</strong> {movie.omdb.Actors}<br/>
-                    <strong>Genre(s):</strong> {movie.omdb.Genre}<br/>
+                    <strong>Genre(s):</strong> {movie.genre.map(genre => genre.name).join(', ')}<br/>
                 </div>
             </div>
             <div className="w-full text-right order-2 clear-right"><a className="text-white inline-block pt-4" href={movie.imdb}>View on IMDb</a></div>

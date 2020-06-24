@@ -38,7 +38,7 @@
     "recharts": "^1.8.5"
   },
   "devDependencies": {
-    "contentful-management": "^5.26.3",
+    "contentful-management": "^5.27.1",
     "node-fetch": "^2.6.0",
     "postcss-responsive-type": "^1.0.0",
     "prettier": "2.0.5",
