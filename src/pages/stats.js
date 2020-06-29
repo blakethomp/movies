@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { graphql, Link } from 'gatsby';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, LineChart, Line, CartesianGrid, ReferenceLine, ComposedChart, Area } from 'recharts';
+import ReactTooltip from 'react-tooltip';
 import moment from 'moment';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import Layout from '../components/layout';
@@ -487,18 +488,26 @@ const FrequentCastCrew = ({ viewings }) => {
         const cast = movie.omdb.Actors.split(', ');
         cast.map(name => {
             if (!castCount[name]) {
-                castCount[name] = 0;
+                castCount[name] = {
+                    count: 0,
+                    movies: []
+                };
             }
-            castCount[name]++;
+            castCount[name].count++;
+            castCount[name].movies.push(movie.title);
             return null;
         })
 
         const director = movie.omdb.Director.split(', ');
         director.map(name => {
             if (!directorCount[name]) {
-                directorCount[name] = 0;
+                directorCount[name] = {
+                    count: 0,
+                    movies: []
+                };
             }
-            directorCount[name]++;
+            directorCount[name].count++;
+            directorCount[name].movies.push(movie.title);
             return null;
         })
 
@@ -506,19 +515,23 @@ const FrequentCastCrew = ({ viewings }) => {
         const writer = [...new Set(movie.omdb.Writer.split(', ').map(name => name.replace(/\s\(.*?\)$/, '')))];
         writer.map(name => {
             if (!writerCount[name]) {
-                writerCount[name] = 0;
+                writerCount[name] = {
+                    count: 0,
+                    movies: []
+                };
             }
-            writerCount[name]++;
+            writerCount[name].count++;
+            writerCount[name].movies.push(movie.title);
             return null;
         })
         return null;
     });
 
-    const orderedCast = Object.keys(castCount).sort((a, b) => castCount[b] - castCount[a]).map(name => { return {name: name, count: castCount[name]}});
+    const orderedCast = Object.keys(castCount).sort((a, b) => castCount[b].count - castCount[a].count).map(name => { return {name: name, count: castCount[name].count, movies: castCount[name].movies}});
     const castThreshold = orderedCast.slice(0, Math.ceil(orderedCast.length / 3 / 2)).reverse()[0].count;
-    const orderedDirectors = Object.keys(directorCount).sort((a, b) => directorCount[b] - directorCount[a]).map(name => { return {name: name, count: directorCount[name]}});
+    const orderedDirectors = Object.keys(directorCount).sort((a, b) => directorCount[b].count - directorCount[a].count).map(name => { return {name: name, count: directorCount[name].count, movies: directorCount[name].movies}});
     const directorThreshold = orderedDirectors.slice(0, Math.ceil(orderedDirectors.length / 3 / 2)).reverse()[0].count;
-    const orderedWriters = Object.keys(writerCount).sort((a, b) => writerCount[b] - writerCount[a]).map(name => { return {name: name, count: writerCount[name]}});
+    const orderedWriters = Object.keys(writerCount).sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => { return {name: name, count: writerCount[name].count, movies: writerCount[name].movies}});
     const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
 
     return (
@@ -529,7 +542,7 @@ const FrequentCastCrew = ({ viewings }) => {
                     <h3>Cast</h3>
                     <ul className="">
                         {orderedCast.filter(person => person.count >= (castThreshold === 1 ? 2 : castThreshold)).map(person => {
-                            return <li key={person.name}>{person.name} ({person.count})</li>
+                            return <li key={person.name} data-tip={person.movies.join(', ')} data-for="castTooltip">{person.name} ({person.count})</li>
                         })}
                     </ul>
                 </div>
@@ -537,7 +550,7 @@ const FrequentCastCrew = ({ viewings }) => {
                     <h3>Directors</h3>
                     <ul className="">
                         {orderedDirectors.filter(person => person.count >= (directorThreshold === 1 ? 2 : directorThreshold)).map(person => {
-                            return <li key={person.name}>{person.name} ({person.count})</li>
+                            return <li key={person.name} data-tip={person.movies.join(', ')} data-for="castTooltip">{person.name} ({person.count})</li>
                         })}
                     </ul>
                 </div>
@@ -545,11 +558,18 @@ const FrequentCastCrew = ({ viewings }) => {
                     <h3>Writers</h3>
                     <ul className="">
                         {orderedWriters.filter(person => person.count >= (writerThreshold === 1 ? 2 : writerThreshold)).map(person => {
-                            return <li key={person.name}>{person.name} ({person.count})</li>
+                            return <li key={person.name} data-tip={person.movies.join(', ')} data-for="castTooltip">{person.name} ({person.count})</li>
                         })}
                     </ul>
                 </div>
             </div>
+            <ReactTooltip
+                className="tooltip"
+                place="top"
+                id="castTooltip"
+                effect="solid"
+                type="info"
+            />
         </>
     )
 }

@@ -7,7 +7,7 @@ const MovieTooltip = ({ viewings, id }) => {
 
     return (
         <ReactTooltip
-            className="tooltip"
+            className="tooltip tooltip--movie"
             event="click"
             globalEventOff="click"
             clickable={true}

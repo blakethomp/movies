@@ -34,6 +34,24 @@ const ViewingsOverview = ({ viewings, showLink }) => {
                 <h3 className="ms-xl text-center">Top Genres</h3>
                 <div className="flex flex-col xs:flex-row flex-wrap justify-around">
                     <div className="flex flex-col mt-4 items-center xs:items-start">
+                        <span className="ms-lg self-center">Last 30 Days</span>
+                        <ol className="list-decimal pl-6 mt-2">
+                            {completed && viewingsByGenre(
+                                completed.filter(viewing => {
+                                    const days = 30;
+                                    const dateCompleted = new Date(viewing.node.dateCompleted);
+                                    dateCompleted.setTime(dateCompleted.getTime() + (days * 24 * 60 * 60 * 1000));
+                                    const today = new Date();
+                                    return dateCompleted >= today;
+                                })
+                            )
+                            .slice(0, 5)
+                            .map((genre, i) => {
+                                return <li key={genre.name}>{genre.name}</li>
+                            })}
+                        </ol>
+                    </div>
+                    <div className="flex flex-col mt-4 items-center xs:items-start">
                         <span className="ms-lg self-center">Last 90 Days</span>
                         <ol className="list-decimal pl-6 mt-2">
                             {completed && viewingsByGenre(
@@ -65,14 +83,6 @@ const ViewingsOverview = ({ viewings, showLink }) => {
                             )
                             .slice(0, 5)
                             .map((genre, i) => {
-                                return <li key={genre.name}>{genre.name}</li>
-                            })}
-                        </ol>
-                    </div>
-                    <div className="flex flex-col mt-4 items-center xs:items-start">
-                        <span className="ms-lg self-center">All-Time</span>
-                        <ol className="list-decimal pl-6 mt-2">
-                            {completed && viewingsByGenre(completed).slice(0, 5).map((genre, i) => {
                                 return <li key={genre.name}>{genre.name}</li>
                             })}
                         </ol>

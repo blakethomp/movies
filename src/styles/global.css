@@ -26,11 +26,14 @@ a {
 
 .tooltip {
     opacity: 1 !important;
+}
+
+.tooltip--movie {
     @apply w-9/12 max-w-md;
 }
 
 @screen md {
-    .tooltip {
+    .tooltip--movie {
         @apply max-w-screen-sm;
 
     }
