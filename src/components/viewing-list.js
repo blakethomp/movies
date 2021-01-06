@@ -39,7 +39,7 @@ const ViewingList = ({ viewings, className }) => {
                                 <button id={`tooltip-recent-${i}`} className="absolute top-0 right-0" data-tip={i} data-for={tooltipId} title="More Info" aria-controls={tooltipId}>
                                     <BsInfoCircleFill className="h-6 w-6 text-blue-500 hover:text-blue-800" />
                                 </button>
-                                <p>{omdbPlot ? movie.omdb.Plot : movie.description.description}</p>
+                                <p>{omdbPlot ? movie.omdb.Plot : movie?.description?.description}</p>
                                 {viewing.notes &&
                                     <div className="mt-4"><strong>Thoughts:</strong> {documentToPlainTextString(viewing.notes.json)}</div>
                                 }
