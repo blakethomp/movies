@@ -42,7 +42,7 @@
     "node-fetch": "^2.6.0",
     "postcss-responsive-type": "^1.0.0",
     "prettier": "2.0.5",
-    "tailwindcss": "^1.4.0",
+    "tailwindcss": "^1.9.6",
     "tailwindcss-modularscale": "^1.1.0"
   },
   "repository": {

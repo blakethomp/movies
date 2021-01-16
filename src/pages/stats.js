@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import { graphql, Link } from 'gatsby';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, LineChart, Line, CartesianGrid, ReferenceLine, ComposedChart, Area } from 'recharts';
@@ -6,7 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import moment from 'moment';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import Layout from '../components/layout';
-import { daysWatched } from '../utils/date';
+import { displayDate, daysWatched } from '../utils/date';
 
 const StatsPage = ({ data: { allViewings: { edges: allViewings } }, path }) => {
     const didNotFinish = allViewings.filter(viewing => viewing.node.didNotFinish);
@@ -75,6 +75,7 @@ export const pageQuery = graphql`
         allViewings: allContentfulViewing(sort: { fields: dateCompleted, order: DESC }) {
             edges {
                 node {
+                    id
                     dateStarted
                     dateCompleted
                     rating
@@ -233,6 +234,7 @@ function viewingsByGenreByMonth(viewings, cumulative = false) {
 
 const ViewingsByMonth = ({ viewings }) => {
     const data = viewingsByMonth(viewings);
+    const [monthlyViewings, setMonthlyViewings] = useState();
 
     return (
         <>
@@ -247,9 +249,33 @@ const ViewingsByMonth = ({ viewings }) => {
                     <XAxis type="category" dataKey="label" />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="viewings.length" name="Viewings" fill={defaultTheme.colors.indigo[500]} />
+                    <Bar
+                        dataKey="viewings.length"
+                        name="Viewings"
+                        onClick={(data, index) => {
+                            console.log(data, index)
+                            setMonthlyViewings(data);
+                        }}
+                        fill={defaultTheme.colors.indigo[500]}
+                    />
                 </BarChart>
             </ResponsiveContainer>
+            <div className="transition-all">
+                {monthlyViewings && (
+                    <>
+                        <button className="btn btn-red py-1 float-right" onClick={() => setMonthlyViewings()}>close</button>
+                        <h3>{monthlyViewings.label}</h3>
+                        <ul>
+                            {monthlyViewings.viewings.map(({ node: { id, dateCompleted, movie: [ movie ] } }) => {
+                                return (
+                                    <li key={id}>{displayDate(dateCompleted)} - {movie.title}</li>
+                                )
+                            })}
+                        </ul>
+                    </>
+                )}
+            </div>
+
         </>
     )
 }
