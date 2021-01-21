@@ -253,7 +253,6 @@ const ViewingsByMonth = ({ viewings }) => {
                         dataKey="viewings.length"
                         name="Viewings"
                         onClick={(data, index) => {
-                            console.log(data, index)
                             setMonthlyViewings(data);
                         }}
                         fill={defaultTheme.colors.indigo[500]}
@@ -515,78 +514,97 @@ const FrequentCastCrew = ({ viewings }) => {
         cast.map(name => {
             if (!castCount[name]) {
                 castCount[name] = {
+                    name: name,
                     count: 0,
-                    movies: []
+                    movies: {}
                 };
             }
             castCount[name].count++;
-            castCount[name].movies.push(movie.title);
+            if (castCount[name].movies[movie.title]) {
+                castCount[name].movies[movie.title].count++;
+            } else {
+                castCount[name].movies[movie.title] = {count: 1}
+            }
             return null;
         })
 
-        const director = movie.omdb.Director.split(', ');
+        // Directors can have designations (i.e. "co-director") in parentheses, remove them.
+        const director = [...movie.omdb.Director.split(', ').map(name => name.replace(/\s?\(.*?\)$/, ''))];
         director.map(name => {
             if (!directorCount[name]) {
                 directorCount[name] = {
+                    name: name,
                     count: 0,
-                    movies: []
+                    movies: {}
                 };
             }
             directorCount[name].count++;
-            directorCount[name].movies.push(movie.title);
+            if (directorCount[name].movies[movie.title]) {
+                directorCount[name].movies[movie.title].count++;
+            } else {
+                directorCount[name].movies[movie.title] = {count: 1}
+            }
             return null;
         })
 
-        // Writers can be on the same movie screenplay, story, etc. Filter out duplicates.
+        // Writers can be on the same movie multiple times for screenplay, story, etc. use Set() to filter out duplicates.
         const writer = [...new Set(movie.omdb.Writer.split(', ').map(name => name.replace(/\s\(.*?\)$/, '')))];
         writer.map(name => {
             if (!writerCount[name]) {
                 writerCount[name] = {
+                    name: name,
                     count: 0,
-                    movies: []
+                    movies: {}
                 };
             }
             writerCount[name].count++;
-            writerCount[name].movies.push(movie.title);
+            if (writerCount[name].movies[movie.title]) {
+                writerCount[name].movies[movie.title].count++;
+            } else {
+                writerCount[name].movies[movie.title] = {count: 1}
+            }
             return null;
         })
         return null;
     });
 
-    const orderedCast = Object.keys(castCount).sort((a, b) => castCount[b].count - castCount[a].count).map(name => { return {name: name, count: castCount[name].count, movies: castCount[name].movies}});
+    const orderedCast = Object.keys(castCount).sort((a, b) => castCount[b].count - castCount[a].count).map(name => ({...castCount[name]}));
     const castThreshold = orderedCast.slice(0, Math.ceil(orderedCast.length / 3 / 2)).reverse()[0].count;
-    const orderedDirectors = Object.keys(directorCount).sort((a, b) => directorCount[b].count - directorCount[a].count).map(name => { return {name: name, count: directorCount[name].count, movies: directorCount[name].movies}});
+    const orderedDirectors = Object.keys(directorCount).sort((a, b) => directorCount[b].count - directorCount[a].count).map(name => ({...directorCount[name]}));
     const directorThreshold = orderedDirectors.slice(0, Math.ceil(orderedDirectors.length / 3 / 2)).reverse()[0].count;
-    const orderedWriters = Object.keys(writerCount).sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => { return {name: name, count: writerCount[name].count, movies: writerCount[name].movies}});
+    const orderedWriters = Object.keys(writerCount).sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => ({...writerCount[name]}));
     const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
+
+    function PeopleList({heading, list, displayThreshold}) {
+        return (
+            <>
+                <h3>{heading}</h3>
+                <ul>
+                    {list.filter(person => person.count >= (displayThreshold === 1 ? 2 : displayThreshold)).map(person => {
+                        const {name, count, movies} = person;
+                        const tipContent = Object.keys(movies).sort((a, b) => movies[b].count - movies[a].count).map(movie => {
+                            const {[movie]: {count: titleCount}} = movies;
+                            return `${movie}${titleCount > 1 ? ` (${titleCount})` : ''}`;
+                        }).join(', ');
+                        return <li key={name} data-tip={tipContent} data-for="castTooltip">{name} ({count})</li>
+                    })}
+                </ul>
+            </>
+        )
+    }
 
     return (
         <>
             <h2>Frequent People</h2>
             <div className="flex flex-col xs:flex-row flex-wrap justify-between">
                 <div className="flex flex-col mt-4 items-center xs:items-start">
-                    <h3>Cast</h3>
-                    <ul className="">
-                        {orderedCast.filter(person => person.count >= (castThreshold === 1 ? 2 : castThreshold)).map(person => {
-                            return <li key={person.name} data-tip={person.movies.join(', ')} data-for="castTooltip">{person.name} ({person.count})</li>
-                        })}
-                    </ul>
+                    <PeopleList heading="Cast" list={orderedCast} displayThreshold={castThreshold} />
                 </div>
                 <div className="flex flex-col mt-4 items-center xs:items-start">
-                    <h3>Directors</h3>
-                    <ul className="">
-                        {orderedDirectors.filter(person => person.count >= (directorThreshold === 1 ? 2 : directorThreshold)).map(person => {
-                            return <li key={person.name} data-tip={person.movies.join(', ')} data-for="castTooltip">{person.name} ({person.count})</li>
-                        })}
-                    </ul>
+                    <PeopleList heading="Directors" list={orderedDirectors} displayThreshold={directorThreshold} />
                 </div>
                 <div className="flex flex-col mt-4 items-center xs:items-start">
-                    <h3>Writers</h3>
-                    <ul className="">
-                        {orderedWriters.filter(person => person.count >= (writerThreshold === 1 ? 2 : writerThreshold)).map(person => {
-                            return <li key={person.name} data-tip={person.movies.join(', ')} data-for="castTooltip">{person.name} ({person.count})</li>
-                        })}
-                    </ul>
+                    <PeopleList heading="Writers" list={orderedWriters} displayThreshold={writerThreshold} />
                 </div>
             </div>
             <ReactTooltip
