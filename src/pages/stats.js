@@ -580,7 +580,7 @@ const FrequentCastCrew = ({ viewings }) => {
             <>
                 <h3>{heading}</h3>
                 <ul>
-                    {list.filter(person => person.count >= (displayThreshold === 1 ? 2 : displayThreshold)).map(person => {
+                    {[...list].filter(person => person.count >= (displayThreshold === 1 ? 2 : displayThreshold)).map(person => {
                         const {name, count, movies} = person;
                         const tipContent = Object.keys(movies).sort((a, b) => movies[b].count - movies[a].count).map(movie => {
                             const {[movie]: {count: titleCount}} = movies;
