@@ -586,7 +586,7 @@ const FrequentCastCrew = ({ viewings }) => {
                             const {[movie]: {count: titleCount}} = movies;
                             return `${movie}${titleCount > 1 ? ` (${titleCount})` : ''}`;
                         }).join(', ');
-                        return <li key={`${heading}-${person.name}-list`} data-what={person.name} data-tip={tipContent} data-for="castTooltip">{person.name} ({person.count})</li>
+                        return <li key={`${heading}-${person.name}-list`} data-what={person.name} data-tip={tipContent} data-for="castTooltip">{person.name} {person.name} ({person.count})</li>
                     })}
                 </ul>
             </>
