@@ -54,6 +54,9 @@ a {
 .btn-red:hover {
     @apply bg-red-700;
 }
+.movie-popout ul {
+    columns: 2;
+}
 
 @tailwind components;
 

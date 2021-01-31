@@ -257,15 +257,15 @@ const ViewingsByMonth = ({ viewings }) => {
                     />
                 </BarChart>
             </ResponsiveContainer>
-            <div className="transition-all">
+            <div className="movie-popout">
                 {monthlyViewings && (
                     <>
                         <button className="btn btn-red py-1 float-right" onClick={() => setMonthlyViewings()}>close</button>
                         <h3>{monthlyViewings.label}</h3>
-                        <ul>
-                            {monthlyViewings.viewings.map(({ node: { id, dateCompleted, movie: [ movie ] } }) => {
+                        <ul className="mt-4">
+                            {monthlyViewings.viewings.sort((a, b) => a.node.movie[0].title.localeCompare(b.node.movie[0].title)).map(({ node: { id, dateCompleted, movie: [ movie ] } }) => {
                                 return (
-                                    <li key={id}>{displayDate(dateCompleted)} - {movie.title}</li>
+                                    <li key={id}>{movie.title}</li>
                                 )
                             })}
                         </ul>
@@ -584,9 +584,16 @@ const FrequentCastCrew = ({ viewings }) => {
                             const {[movie]: {count: titleCount}} = movies;
                             return `${movie}${titleCount > 1 ? ` (${titleCount})` : ''}`;
                         }).join(', ');
-                        return <li key={`${heading}-${name}-list`} data-tip={tipContent} data-for="castTooltip">{name} ({count})</li>
+                        return <li key={`${heading}-${name}-list`} data-tip={tipContent} data-for={`${heading}ToolTip`}>{name} ({count})</li>
                     })}
                 </ul>
+                <ReactTooltip
+                    className="tooltip"
+                    place="top"
+                    id={`${heading}ToolTip`}
+                    effect="solid"
+                    type="info"
+                />
             </>
         )
     }
@@ -605,13 +612,6 @@ const FrequentCastCrew = ({ viewings }) => {
                     <PeopleList heading="Writers" list={orderedWriters} displayThreshold={writerThreshold} />
                 </div>
             </div>
-            <ReactTooltip
-                className="tooltip"
-                place="top"
-                id="castTooltip"
-                effect="solid"
-                type="info"
-            />
         </>
     )
 }
