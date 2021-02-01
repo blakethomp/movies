@@ -578,8 +578,8 @@ const FrequentCastCrew = ({ viewings }) => {
     })
     console.log(test)
     console.log(test.sort((a, b) => {
-        console.log(a, b, b - a);
-        return b - a;
+        console.log(a, b, castCount[b].count, castCount[a].count, castCount[b].count - castCount[a].count);
+        return castCount[b].count - castCount[a].count;
     }))
     console.log(orderedCast.slice(0, 10));
     function PeopleList({heading, list, displayThreshold}) {
