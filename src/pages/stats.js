@@ -572,15 +572,10 @@ const FrequentCastCrew = ({ viewings }) => {
     const directorThreshold = orderedDirectors.slice(0, Math.ceil(orderedDirectors.length / 3 / 2)).reverse()[0].count;
     const orderedWriters = Object.keys(writerCount).sort((a, b) => a.localeCompare(b)).sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => ({...writerCount[name]}));
     const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
-    const test = Object.keys(castCount).filter(cast => castCount[cast].count > 4).sort((a, b) => {
-        console.log(a, b, a.localeCompare(b))
-        return a.localeCompare(b);
-    }).sort((a, b) => {
-        console.log(a, b, castCount[b].count, castCount[a].count, castCount[b].count - castCount[a].count);
-        return castCount[b].count - castCount[a].count;
-    });
+    const test = Object.keys(castCount).filter(cast => castCount[cast].count > 4).sort((a, b) => a.localeCompare(b)).sort((a, b) => castCount[b].count - castCount[a].count);
+    const test2 = Object.keys(castCount).sort((a, b) => a.localeCompare(b)).sort((a, b) => castCount[b].count - castCount[a].count).map(name => ({...castCount[name]}));
     console.log(test, test.map(person => ({...castCount[person]})))
-    console.log(orderedCast.slice(0, 10));
+    console.log(test2.slice(0, 10));
     function PeopleList({heading, list, displayThreshold}) {
         return (
             <>
