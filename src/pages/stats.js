@@ -573,7 +573,7 @@ const FrequentCastCrew = ({ viewings }) => {
     const orderedWriters = Object.keys(writerCount).sort().sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => ({...writerCount[name]}));
     const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
     
-    console.log(orderedCast.slice(0, 10));
+    console.log(Object.keys(castCount).sort(), Object.keys(castCount).filter(thing => castCount[thing].count >=2 ).sort(), orderedCast.slice(0, 10));
     function PeopleList({heading, list, displayThreshold}) {
         return (
             <>
