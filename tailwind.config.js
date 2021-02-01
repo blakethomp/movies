@@ -2,7 +2,13 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 // const ms = require('@tailwindcss-modularscale/index');
 
 module.exports = {
-  purge: [],
+  future: {
+    purgeLayersByDefault: true,
+  },
+  purge: {
+    layers: ['components', 'utilities'],
+    content: ['./src/**/*.js'],
+  },
   theme: {
     fontFamily: {
       body: ['"Tenor Sans"', 'sans-serif'],
