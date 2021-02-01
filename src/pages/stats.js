@@ -486,7 +486,7 @@ const DisappointmentDelight = ({ viewings }) => {
                     <h3>Disappontments</h3>
                     <ul>
                         {Object.keys(movieDiffs).filter(diff => diff < 0).sort((a, b) => a - b).map(diff => {
-                            return movieDiffs[diff].sort((a, b) => b.node.expectedRating - a.node.expectedRating).map(({ node: viewing, node: { movie: [ movie ] } }) => {
+                            return movieDiffs[diff].sort((a, b) => b.node.expectedRating - a.node.expectedRating || a.node.movie[0].title.localeCompare(b.node.movie[0].title)).map(({ node: viewing, node: { movie: [ movie ] } }) => {
                                 return (
                                     <li className="text-sm" key={`disappointment-${movie.title}`}><a href={movie.imdb}>{movie.title}</a> ({viewing.expectedRating} / {viewing.rating})</li>
                                 )
