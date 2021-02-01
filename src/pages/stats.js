@@ -563,7 +563,7 @@ const FrequentCastCrew = ({ viewings }) => {
     });
 
     const orderedCast = Object.keys(castCount).sort().sort((a, b) => castCount[b].count - castCount[a].count).map(name => ({...castCount[name]}));
-    const castThreshold = orderedCast.slice(0, Math.ceil(orderedCast.length / 3 / 2)).reverse()[0].count;
+    const castThreshold = [...orderedCast].slice(0, Math.ceil(orderedCast.length / 3 / 2)).reverse()[0].count;
     const orderedDirectors = Object.keys(directorCount).sort().sort((a, b) => directorCount[b].count - directorCount[a].count).map(name => ({...directorCount[name]}));
     const directorThreshold = orderedDirectors.slice(0, Math.ceil(orderedDirectors.length / 3 / 2)).reverse()[0].count;
     const orderedWriters = Object.keys(writerCount).sort().sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => ({...writerCount[name]}));
