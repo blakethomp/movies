@@ -572,6 +572,10 @@ const FrequentCastCrew = ({ viewings }) => {
     const directorThreshold = orderedDirectors.slice(0, Math.ceil(orderedDirectors.length / 3 / 2)).reverse()[0].count;
     const orderedWriters = Object.keys(writerCount).sort((a, b) => a.localeCompare(b)).sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => ({...writerCount[name]}));
     const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
+    console.log(Object.keys(castCount).filter(cast => castCount[cast].count > 2).sort((a, b) => {
+        console.log(a, b, a.localeCompare(b))
+        return a.localeCompare(b);
+    }))
     console.log(orderedCast.slice(0, 10));
     function PeopleList({heading, list, displayThreshold}) {
         return (
