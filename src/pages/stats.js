@@ -575,12 +575,11 @@ const FrequentCastCrew = ({ viewings }) => {
     const test = Object.keys(castCount).filter(cast => castCount[cast].count > 4).sort((a, b) => {
         console.log(a, b, a.localeCompare(b))
         return a.localeCompare(b);
-    })
-    console.log(test)
-    console.log(test.sort((a, b) => {
+    }).sort((a, b) => {
         console.log(a, b, castCount[b].count, castCount[a].count, castCount[b].count - castCount[a].count);
         return castCount[b].count - castCount[a].count;
-    }))
+    });
+    console.log(test, test.map(person => ({...castCount[person]})))
     console.log(orderedCast.slice(0, 10));
     function PeopleList({heading, list, displayThreshold}) {
         return (
