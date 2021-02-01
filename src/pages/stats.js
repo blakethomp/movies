@@ -507,9 +507,9 @@ const FrequentCastCrew = ({ viewings }) => {
     const castCount = {};
     const directorCount = {};
     const writerCount = {};
-    viewings.map(({ node: { movie: [ movie ] } }) => {
+    viewings.forEach(({ node: { movie: [ movie ] } }) => {
         const cast = movie.omdb.Actors.split(', ');
-        cast.map(name => {
+        cast.forEach(name => {
             if (!castCount[name]) {
                 castCount[name] = {
                     name: name,
@@ -523,12 +523,11 @@ const FrequentCastCrew = ({ viewings }) => {
             } else {
                 castCount[name].movies[movie.title] = {count: 1}
             }
-            return null;
         });
 
         // Directors can have designations (i.e. "co-director") in parentheses, remove them.
         const director = [...movie.omdb.Director.split(', ').map(name => name.replace(/\s?\(.*?\)$/, ''))];
-        director.map(name => {
+        director.forEach(name => {
             if (!directorCount[name]) {
                 directorCount[name] = {
                     name: name,
@@ -542,12 +541,11 @@ const FrequentCastCrew = ({ viewings }) => {
             } else {
                 directorCount[name].movies[movie.title] = {count: 1}
             }
-            return null;
         });
 
         // Writers can be on the same movie multiple times for screenplay, story, etc. use Set() to filter out duplicates.
         const writer = [...new Set(movie.omdb.Writer.split(', ').map(name => name.replace(/\s\(.*?\)$/, '')))];
-        writer.map(name => {
+        writer.forEach(name => {
             if (!writerCount[name]) {
                 writerCount[name] = {
                     name: name,
@@ -561,9 +559,7 @@ const FrequentCastCrew = ({ viewings }) => {
             } else {
                 writerCount[name].movies[movie.title] = {count: 1}
             }
-            return null;
         });
-        return null;
     });
 
     const orderedCast = Object.keys(castCount).sort().sort((a, b) => castCount[b].count - castCount[a].count).map(name => ({...castCount[name]}));
@@ -573,7 +569,7 @@ const FrequentCastCrew = ({ viewings }) => {
     const orderedWriters = Object.keys(writerCount).sort().sort((a, b) => writerCount[b].count - writerCount[a].count).map(name => ({...writerCount[name]}));
     const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
     
-    console.log(Object.keys(castCount).sort(), Object.keys(castCount).filter(thing => castCount[thing].count >=2 ).sort(), orderedCast.slice(0, 10));
+    console.log(Object.keys(castCount).sort().sort((a, b) => castCount[b].count - castCount[a].count), orderedCast.slice(0, 10));
     function PeopleList({heading, list, displayThreshold}) {
         return (
             <>
