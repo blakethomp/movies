@@ -571,7 +571,7 @@ const FrequentCastCrew = ({ viewings }) => {
     
     console.log(Object.keys(castCount).sort().sort((a, b) => {
         if (a.startsWith('Alison') || b.startsWith('Alison') || a.startsWith('Emma') || b.startsWith('Emma')) {
-            console.log(castCount[b].count - castCount[a].count);
+            console.log(a, b, castCount[b].count - castCount[a].count);
         }
         return castCount[b].count - castCount[a].count
     }), orderedCast.slice(0, 10));
