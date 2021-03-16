@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { graphql, Link } from 'gatsby';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, LineChart, Line, CartesianGrid, ReferenceLine, ComposedChart, Area } from 'recharts';
 import ReactTooltip from 'react-tooltip';
+import Rate from 'rc-rate'
 import moment from 'moment';
+import clsx from 'clsx';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import Layout from '../components/layout';
 import { displayDate, daysWatched } from '../utils/date';
 
-const StatsPage = ({ data: { allViewings: { edges: allViewings } }, path }) => {
+const StatsPage = ({ data: { allViewings: { edges: allViewings }, allMovies: { edges: allMovies } }, path }) => {
     const didNotFinish = allViewings.filter(viewing => viewing.node.didNotFinish);
     const completed = allViewings.filter(viewing => viewing.node.dateCompleted);
     const genres = viewingsByGenre(completed);
@@ -39,6 +41,10 @@ const StatsPage = ({ data: { allViewings: { edges: allViewings } }, path }) => {
             <div className="my-8 h-px" />
 
             <GenresOverTimeCumulative viewings={completed} genres={genres} />
+
+            <div className="my-8 h-px" />
+
+            <MoviesByReleaseYear movies={allMovies} />
 
             <div className="my-8 h-px" />
 
@@ -82,6 +88,17 @@ export const pageQuery = graphql`
                     expectedRating
                     didNotFinish
                     ...MovieDetails
+                }
+            }
+        }
+        allMovies: allContentfulMovie {
+            edges {
+                node {
+                    id
+                    omdb {
+                        Title
+                        Year
+                    }
                 }
             }
         }
@@ -164,7 +181,7 @@ export function viewingsByGenre(viewings, sort = 'count') {
         case 'count':
             viewingsByGenre.sort((a, b) => b.viewings.length - a.viewings.length || a.name.localeCompare(b.name));
             break;
-        default: 
+        default:
             viewingsByGenre.sort((a, b) => a.name.localeCompare(b.name));
     }
 
@@ -262,10 +279,10 @@ const ViewingsByMonth = ({ viewings }) => {
                     <>
                         <button className="btn btn-red py-1 float-right" onClick={() => setMonthlyViewings()}>close</button>
                         <h3>{monthlyViewings.label}</h3>
-                        <ul className="mt-4">
-                            {monthlyViewings.viewings.sort((a, b) => a.node.movie[0].title.localeCompare(b.node.movie[0].title)).map(({ node: { id, dateCompleted, movie: [ movie ] } }) => {
+                        <ul className="mt-4 movie-popout__list">
+                            {monthlyViewings.viewings.sort((a, b) => b.node.rating - a.node.rating || a.node.movie[0].title.localeCompare(b.node.movie[0].title)).map(({ node: { id, dateCompleted, movie: [ movie ], rating } }) => {
                                 return (
-                                    <li key={id}>{movie.title}</li>
+                                    <li key={id} className="flex flex-no-wrap justify-between"><a href={movie.imdb} className="no-underline hover:underline text-black">{movie.title}</a> <Rate className="whitespace-no-wrap" value={rating} disabled={true} style={{'pointerEvents': 'none'}}/></li>
                                 )
                             })}
                         </ul>
@@ -396,6 +413,59 @@ const GenresOverTimeCumulative = ({ viewings, genres }) => {
 GenresOverTimeCumulative.propTypes = {
     viewings: PropTypes.array.isRequired,
     genres: PropTypes.array.isRequired
+}
+
+const MoviesByReleaseYear = ({ movies }) => {
+    const moviesByYear = {};
+    movies.forEach(movie => {
+        const {node: {omdb: {Year: year, Title: title}}} = movie;
+        if (!moviesByYear[year]) {
+            moviesByYear[year] = {
+                year: year,
+                movies: []
+            };
+        }
+        moviesByYear[year].movies.push(title);
+    });
+    const data = Object.keys(moviesByYear).sort((a, b) => b - a).map(year => moviesByYear[year]);
+
+    function moviesByYearTooltip({ active, payload, label }) {
+        if (active && payload && payload.length) {
+            const [{payload: {year, movies: moviesForYear}}] = payload;
+            moviesForYear.sort()
+
+            return (
+                <div className="movie-chart-tip py-2 px-4 bg-white rounded border border-solid border-black">
+                    <h3>{year}</h3>
+                    <ul className={clsx('movie-chart-tip__list', moviesForYear.length > 10 && 'movie-chart-tip__list--long')}>
+                        {moviesForYear.map(movie => {
+                            return <li>{movie}</li>;
+                        })}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    return (
+        <>
+            <h2>Movies By Release Year</h2>
+            <ResponsiveContainer width="100%" height={data.length * 30} className="mt-4">
+                <BarChart
+                    data={data}
+                    layout="vertical"
+                    margin={{ top: 5, right: 5, bottom: 5, left: 60 }}
+                    barSize={15}
+                >
+                    <YAxis type="category" dataKey="year" interval={0}  />
+                    <XAxis type="number" />
+                    <Tooltip content={moviesByYearTooltip} />
+                    <Legend />
+                    <Bar dataKey="movies.length" name="Titles" fill={defaultTheme.colors.red[500]} />
+                </BarChart>
+            </ResponsiveContainer>
+        </>
+    )
 }
 
 const DisappointmentDelight = ({ viewings }) => {
@@ -568,7 +638,7 @@ const FrequentCastCrew = ({ viewings }) => {
     const directorThreshold = orderedDirectors.slice(0, Math.ceil(orderedDirectors.length / 3 / 2)).reverse()[0].count;
     const orderedWriters = Object.keys(writerCount).sort((a, b) => writerCount[b].count - writerCount[a].count || a.localeCompare(b)).map(name => ({...writerCount[name]}));
     const writerThreshold = orderedWriters.slice(0, Math.ceil(orderedWriters.length / 3 / 2)).reverse()[0].count;
-    
+
     function PeopleList({heading, list, displayThreshold}) {
         return (
             <>

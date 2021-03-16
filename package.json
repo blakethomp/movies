@@ -18,6 +18,7 @@
     "@contentful/rich-text-plain-text-renderer": "^14.0.0",
     "@contentful/rich-text-react-renderer": "^13.4.0",
     "browserslist": "^4.16.3",
+    "clsx": "^1.1.1",
     "csv-parse": "^4.10.1",
     "dotenv": "^8.2.0",
     "gatsby": "^2.21.0",

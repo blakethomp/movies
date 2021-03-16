@@ -54,7 +54,7 @@ a {
 .btn-red:hover {
     @apply bg-red-700;
 }
-.movie-popout ul {
+.movie-popout__list, .movie-chart-tip__list--long {
     columns: 2;
 }
 
