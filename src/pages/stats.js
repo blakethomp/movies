@@ -95,6 +95,7 @@ export const pageQuery = graphql`
             edges {
                 node {
                     id
+                    imdb
                     omdb {
                         Title
                         Year
@@ -249,7 +250,7 @@ function viewingsByGenreByMonth(viewings, cumulative = false) {
 
 const ViewingsByMonth = ({ viewings }) => {
     const data = viewingsByMonth(viewings);
-    const [monthlyViewings, setMonthlyViewings] = useState();
+    const [popoutData, setPopoutData] = useState();
 
     return (
         <>
@@ -259,6 +260,11 @@ const ViewingsByMonth = ({ viewings }) => {
                     data={data}
                     maxBarSize={40}
                     margin={{ left: -30 }}
+                    onClick={(data) => {
+                        if (data.activePayload?.length > 0) {
+                            setPopoutData(data.activePayload[0].payload);
+                        }
+                    }}
                 >
                     <YAxis />
                     <XAxis type="category" dataKey="label" />
@@ -267,20 +273,17 @@ const ViewingsByMonth = ({ viewings }) => {
                     <Bar
                         dataKey="viewings.length"
                         name="Viewings"
-                        onClick={(data, index) => {
-                            setMonthlyViewings(data);
-                        }}
                         fill={defaultTheme.colors.indigo[500]}
                     />
                 </BarChart>
             </ResponsiveContainer>
             <div className="movie-popout">
-                {monthlyViewings && (
+                {popoutData && (
                     <>
-                        <button className="btn btn-red py-1 float-right" onClick={() => setMonthlyViewings()}>close</button>
-                        <h3>{monthlyViewings.label}</h3>
-                        <ul className="mt-4 movie-popout__list">
-                            {monthlyViewings.viewings.sort((a, b) => b.node.rating - a.node.rating || a.node.movie[0].title.localeCompare(b.node.movie[0].title)).map(({ node: { id, dateCompleted, movie: [ movie ], rating } }) => {
+                        <button className="btn btn-red py-1 float-right" onClick={() => setPopoutData()}>close</button>
+                        <h3>{popoutData.label}</h3>
+                        <ul className={clsx('mt-4', 'movie-popout__list', popoutData.movies.length >= 10 ? 'movie-popout__list--long' : '')}>
+                            {popoutData.viewings.sort((a, b) => b.node.rating - a.node.rating || a.node.movie[0].title.localeCompare(b.node.movie[0].title)).map(({ node: { id, dateCompleted, movie: [ movie ], rating } }) => {
                                 return (
                                     <li key={id} className="flex flex-no-wrap justify-between"><a href={movie.imdb} className="no-underline hover:underline text-black">{movie.title}</a> <Rate className="whitespace-no-wrap" value={rating} disabled={true} style={{'pointerEvents': 'none'}}/></li>
                                 )
@@ -416,54 +419,61 @@ GenresOverTimeCumulative.propTypes = {
 }
 
 const MoviesByReleaseYear = ({ movies }) => {
+    const [popoutData, setPopoutData] = useState();
     const moviesByYear = {};
     movies.forEach(movie => {
-        const {node: {omdb: {Year: year, Title: title}}} = movie;
+        const {node: {imdb, omdb: {Year: year, Title: title}}} = movie;
         if (!moviesByYear[year]) {
             moviesByYear[year] = {
                 year: year,
                 movies: []
             };
         }
-        moviesByYear[year].movies.push(title);
+        moviesByYear[year].movies.push({title, imdb});
     });
-    const data = Object.keys(moviesByYear).sort((a, b) => b - a).map(year => moviesByYear[year]);
-
-    function moviesByYearTooltip({ active, payload, label }) {
-        if (active && payload && payload.length) {
-            const [{payload: {year, movies: moviesForYear}}] = payload;
-            moviesForYear.sort()
-
-            return (
-                <div className="movie-chart-tip py-2 px-4 bg-white rounded border border-solid border-black">
-                    <h3>{year}</h3>
-                    <ul className={clsx('movie-chart-tip__list', moviesForYear.length > 10 && 'movie-chart-tip__list--long')}>
-                        {moviesForYear.map(movie => {
-                            return <li>{movie}</li>;
-                        })}
-                    </ul>
-                </div>
-            )
-        }
-    }
+    const movieData = Object.keys(moviesByYear).sort().map(year => moviesByYear[year]);
 
     return (
         <>
             <h2>Movies By Release Year</h2>
-            <ResponsiveContainer width="100%" height={data.length * 30} className="mt-4">
+            <ResponsiveContainer width="100%" height={350} className="mt-4">
                 <BarChart
-                    data={data}
-                    layout="vertical"
-                    margin={{ top: 5, right: 5, bottom: 5, left: 60 }}
-                    barSize={15}
+                    data={movieData}
+                    layout="horizontal"
+                    margin={{ left: -30 }}
+                    barGap={0}
+                    onClick={(data) => {
+                        if (data.activePayload?.length > 0) {
+                            setPopoutData(data.activePayload[0].payload);
+                        }
+                    }}
                 >
-                    <YAxis type="category" dataKey="year" interval={0}  />
-                    <XAxis type="number" />
-                    <Tooltip content={moviesByYearTooltip} />
+                    <YAxis type="number"   />
+                    <XAxis type="category" dataKey="year" interval={0} angle={-55} height={50} dx={-12} dy={15} />
+                    <Tooltip />
                     <Legend />
-                    <Bar dataKey="movies.length" name="Titles" fill={defaultTheme.colors.red[500]} />
+                    <Bar
+                        dataKey="movies.length"
+                        name="Titles"
+                        fill={defaultTheme.colors.blue[500]}
+                    />
                 </BarChart>
             </ResponsiveContainer>
+            <div className="movie-popout">
+                {popoutData && (
+                    <>
+                        <button className="btn btn-red py-1 float-right" onClick={() => setPopoutData()}>close</button>
+                        <h3>{popoutData.label}</h3>
+                        <ul className={clsx('mt-4', 'movie-popout__list', popoutData.movies.length >= 10 ? 'movie-popout__list--long' : '')}>
+                            {popoutData.movies.sort((a, b) => a.title.localeCompare(b.title)).map(movie => {
+                                return (
+                                    <li key={movie.title} className="flex flex-no-wrap justify-between"><a href={movie.imdb} className="no-underline hover:underline text-black">{movie.title}</a></li>
+                                )
+                            })}
+                        </ul>
+                    </>
+                )}
+            </div>
         </>
     )
 }
