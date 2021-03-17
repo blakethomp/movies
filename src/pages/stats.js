@@ -282,7 +282,7 @@ const ViewingsByMonth = ({ viewings }) => {
                     <>
                         <button className="btn btn-red py-1 float-right" onClick={() => setPopoutData()}>close</button>
                         <h3>{popoutData.label}</h3>
-                        <ul className={clsx('mt-4', 'movie-popout__list', popoutData.movies.length >= 10 ? 'movie-popout__list--long' : '')}>
+                        <ul className={clsx('mt-4', 'movie-popout__list', popoutData.viewings.length >= 10 ? 'movie-popout__list--long' : '')}>
                             {popoutData.viewings.sort((a, b) => b.node.rating - a.node.rating || a.node.movie[0].title.localeCompare(b.node.movie[0].title)).map(({ node: { id, dateCompleted, movie: [ movie ], rating } }) => {
                                 return (
                                     <li key={id} className="flex flex-no-wrap justify-between"><a href={movie.imdb} className="no-underline hover:underline text-black">{movie.title}</a> <Rate className="whitespace-no-wrap" value={rating} disabled={true} style={{'pointerEvents': 'none'}}/></li>
@@ -463,7 +463,7 @@ const MoviesByReleaseYear = ({ movies }) => {
                 {popoutData && (
                     <>
                         <button className="btn btn-red py-1 float-right" onClick={() => setPopoutData()}>close</button>
-                        <h3>{popoutData.label}</h3>
+                        <h3>{popoutData.year}</h3>
                         <ul className={clsx('mt-4', 'movie-popout__list', popoutData.movies.length >= 10 ? 'movie-popout__list--long' : '')}>
                             {popoutData.movies.sort((a, b) => a.title.localeCompare(b.title)).map(movie => {
                                 return (
