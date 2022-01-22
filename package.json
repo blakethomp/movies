@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "contentful-management": "^5.27.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "postcss-responsive-type": "^1.0.0",
     "prettier": "2.0.5",
     "tailwindcss": "^1.9.6",
